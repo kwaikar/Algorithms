@@ -21,19 +21,20 @@ public class MergeSortWithoutRecursion {
 	}
 
 	public static void main(String[] args) {
-		Integer[] input = { 10,1 };
+		Integer[] input = { 10, 1 };
 		Integer[] sortedInput = { 1, 10 };
 		MergeSortWithoutRecursion.sort(input);
 		System.out.println();
 		System.out.println("Sanity Test case execution success status: " + Arrays.deepEquals(input, sortedInput));
-System.out.println("-----------------------------------------------------------------------------------------------------");
-		Statistics stats =new Statistics();
-		Integer[] array = DataPreparationHelper.acceptIntegerArrayFromUser(args);//DataPreparationHelper.prepareRandomIntegerArray(1000000);
-		stats.printFirstTenElements(array,"Top 10 entries from input before sorting ");
+		System.out.println(
+				"-----------------------------------------------------------------------------------------------------");
+		Statistics stats = new Statistics();
+		Integer[] array = DataPreparationHelper.acceptIntegerArrayFromUser(args);// DataPreparationHelper.prepareRandomIntegerArray(1000000);
+		stats.printFirstTenElements(array, "Top 10 entries from input before sorting ");
 		stats.timer();
-		MergeSortWithoutRecursion.sort(array);		
+		MergeSortWithoutRecursion.sort(array);
 		stats.timer();
-		stats.printFirstTenElements(array,"Top 10 entries from input after sorting ");
+		stats.printFirstTenElements(array, "Top 10 entries from input after sorting ");
 
 		array = null;
 
@@ -60,8 +61,7 @@ System.out.println("------------------------------------------------------------
 				 * is ready for merge.
 				 */
 				merge(array, item);
-			} else if (item.getLeft() < item.getRight()) 
-			{
+			} else if (item.getLeft() < item.getRight()) {
 				int q = (item.getLeft() + item.getRight()) / 2;
 				/**
 				 * Mark Item ready for merging
