@@ -9,28 +9,30 @@ import java.util.List;
  */
 public class SetOperationsOnList {
 	public static void main(String[] args) {
-		List<Integer> l1 = new LinkedSortedSetList<Integer>();
-		// l1.add(1);
-		l1.add(2);
-		l1.add(4);
-		  l1.add(5);
-		List<Integer> l2 = new LinkedSortedSetList<Integer>();
-		l2.add(2);
-		  l2.add(5);
-		 l2.add(6);
-		System.out.println(l1+ " "+l2);
+		Pair<LinkedSortedSetList<Integer>, LinkedSortedSetList<Integer>> pair = DataPreparationHelper
+				.acceptTwoIntegerLinkedSortedSetsFromUser(args);
 		List<Integer> intersectionList = new LinkedSortedSetList<Integer>();
-		SetOperationsOnList.intersect(l1, l2, intersectionList);
-		System.out.println("Intersection : "+intersectionList);
-
 		List<Integer> unionList = new LinkedSortedSetList<Integer>();
-		SetOperationsOnList.union(l1, l2, unionList);
-
-		System.out.println("Union : "+unionList);
-
 		List<Integer> diffList = new LinkedSortedSetList<Integer>();
+
+		LinkedSortedSetList<Integer> l1 = pair.getFirst();
+		LinkedSortedSetList<Integer> l2 = pair.getSecond();
+
+		Statistics stats = new Statistics();
+		stats.timer();
+		SetOperationsOnList.intersect(l1, l2, intersectionList);
+		stats.timer("Intersect Operation");
+		stats.printFirstTenElements(intersectionList, "Top 10 items from Intersection:");
+
+		stats.timer();
+		SetOperationsOnList.union(l1, l2, unionList);
+		stats.timer("Union Operation");
+		stats.printFirstTenElements(unionList, "Top 10 items from Union:");
+
+		stats.timer();
 		SetOperationsOnList.difference(l1, l2, diffList);
-		System.out.println("Difference : "+diffList);
+		stats.timer("Set Difference Operatin");
+		stats.printFirstTenElements(diffList, "Top 10 items from Difference:");
 	}
 
 	/**
@@ -105,8 +107,7 @@ public class SetOperationsOnList {
 
 		if ((list1 == null || list1.size() == 0) && (list2 != null && list2.size() != 0)) {
 			unionList = list2;
-		}
-		else if ((list2 == null || list2.size() == 0) && (list1 != null && list1.size() != 0)) {
+		} else if ((list2 == null || list2.size() == 0) && (list1 != null && list1.size() != 0)) {
 			unionList = list1;
 		} else if (unionList != null) {
 			Iterator<T> itr1 = list1.iterator();
@@ -124,8 +125,7 @@ public class SetOperationsOnList {
 					 * Add all item1 entries to the list
 					 */
 					unionList.add(item1);
-					while(itr1.hasNext())
-					{
+					while (itr1.hasNext()) {
 						unionList.add(itr1.next());
 					}
 					break;
@@ -134,14 +134,14 @@ public class SetOperationsOnList {
 					 * Add all item2 entries to the list
 					 */
 					unionList.add(item2);
-					while(itr2.hasNext())
-					{
+					while (itr2.hasNext()) {
 						unionList.add(itr2.next());
 					}
-				break;
+					break;
 				} else {
 					/**
-					 * Both lists are not empty, add only unique entries to the list
+					 * Both lists are not empty, add only unique entries to the
+					 * list
 					 */
 					if ((compare = item1.compareTo(item2)) == 0) {
 						unionList.add(item1);

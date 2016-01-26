@@ -42,7 +42,7 @@ public class DataPreparationHelper {
 	 * @param args : Program arguments for handling the data file Input
 	 * @return
 	 */
-	public static Integer[] acceptIntegerArrayFromUser(String[] args) {
+	public static Integer[] acceptIntegerArrayFromUser(String[] args ) {
 		Scanner in = null;
 		Integer[] array=null;
 		if (args.length > 0) {
@@ -94,4 +94,6 @@ public class DataPreparationHelper {
 
 	}
 
+	
+	
 }
