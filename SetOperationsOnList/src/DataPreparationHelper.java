@@ -160,7 +160,6 @@ public class DataPreparationHelper {
 				System.out.println("Please enter details of list 2");
 				l2 = new LinkedSortedSetList<Integer>(readInputFromUser(in));
 			}
-			System.out.println(l1.size() + " " + l2.size());
 		} finally {
 			in.close();
 		}
