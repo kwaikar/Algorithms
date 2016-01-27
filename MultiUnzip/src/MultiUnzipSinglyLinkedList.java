@@ -1,3 +1,4 @@
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -28,13 +29,13 @@ public class MultiUnzipSinglyLinkedList<T> extends SinglyLinkedList<T> {
 		}
 		/**
 		 * Invariants: subLists - holds "k" current pointers - one per sublist
-		 * heads - "k-1" pointers that points to each of the last k-1 sublists.
+		 * heads - "k" pointers that points to each of the last k sublists.
 		 * 			This is required for combining all sublists 
 		 * currentPointer - Pointer that traverses through original list 
 		 * temp - temporary pointer used for clearing the items that are no more required to be pointed to.
 		 */
 		List<Entry<T>> subLists = new ArrayList<Entry<T>>(k);
-		Stack<Entry<T>> heads = new Stack<>();
+		List<Entry<T>> heads = new ArrayList<>(k);
 
 		/**
 		 * Load First "k" pointers in heads list as well as subLists
@@ -42,9 +43,7 @@ public class MultiUnzipSinglyLinkedList<T> extends SinglyLinkedList<T> {
 		Entry<T> currentPointer = header.next;
 		for (int i = 0; i < k && currentPointer != null; i++) {
 			subLists.add(i, currentPointer);
-			if (i != 0) {
-				heads.push(currentPointer);
-			}
+			heads.add(i,currentPointer);
 			currentPointer = currentPointer.next;
 		}
 
@@ -74,7 +73,7 @@ public class MultiUnzipSinglyLinkedList<T> extends SinglyLinkedList<T> {
 		for (int i = 0; i < k; i++) {
 			Entry<T> current = subLists.get(i);
 			if (i < subLists.size() - 1) {
-				current.next = heads.get(i);
+				current.next = heads.get(i+1);
 			}
 		}
 
