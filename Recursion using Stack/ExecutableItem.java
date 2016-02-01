@@ -1,10 +1,6 @@
 /**
- * 
- */
-
-/**
+ * POJO for holding details of data to be passed to the function
  * @author kanchan
- *
  */
 public class ExecutableItem {
 
