@@ -1,6 +1,9 @@
-import java.io.File;
+import java.io.File; 
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
@@ -36,6 +39,24 @@ public class DataPreparationHelper {
 		return array;
 	}
 
+	public static void main(String[] args) throws Exception {
+
+		FileWriter fr = new FileWriter(new File("input1.txt"));
+		FileWriter fr2 = new FileWriter(new File("input2.txt"));
+		Integer[] arr = prepareRandomIntegerArray(10000000);
+		Integer[] arr2 = prepareRandomIntegerArray(10000000);
+		HashSet<Integer> arrSet = new HashSet<Integer>(Arrays.asList(arr));
+		HashSet<Integer> arrSet2 = new HashSet<Integer>(Arrays.asList(arr2));
+		for (Integer integer : arrSet2) {
+			fr.write(integer + " ");
+		}
+		for (Integer integer : arrSet) {
+			fr2.write(integer + " ");
+		}
+		fr.close();
+		fr2.close();
+	}
+
 	/**
 	 * This method accepts Integer array either through file or through console
 	 * from the user.
@@ -56,7 +77,9 @@ public class DataPreparationHelper {
 				array = readInputFromUser(in);
 			}
 		} finally {
-			in.close();
+			if (in != null) {
+				in.close();
+			}
 		}
 		return array;
 
@@ -81,7 +104,7 @@ public class DataPreparationHelper {
 		for (int i = 0; i < s; i++) {
 			array[i] = in.nextInt();
 		}
-		System.out.println("Input Array: " + array);
+		System.out.println("Input Array: " + Arrays.toString(array));
 		return array;
 	}
 

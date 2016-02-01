@@ -48,6 +48,16 @@ public class LinkedSortedSetList<T> extends LinkedList<T>implements Iterable<T>,
 		return new ListIterator();
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		return super.equals(o);
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
 	/**
 	 * Iterator that returns null whenever list has been exhausted instead of
 	 * throwing exception

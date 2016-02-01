@@ -54,6 +54,12 @@ public class SetOperationsOnList {
 			T item2 = itr2.next();
 			int compare;
 
+			/**
+			 * item1 - Pointer pointing to current entry of list1
+			 * item2 - Pointer pointing to current entry of list2
+			 * compare - holds the comparison result.
+			 */
+
 			while (true) {
 				if ((compare = item1.compareTo(item2)) == 0) {
 					intersectionList.add(item1);
@@ -113,6 +119,11 @@ public class SetOperationsOnList {
 			Iterator<T> itr1 = list1.iterator();
 			Iterator<T> itr2 = list2.iterator();
 
+			/**
+			 * item1 - Pointer pointing to current entry of list1
+			 * item2 - Pointer pointing to current entry of list2
+			 * compare - holds the comparison result.
+			 */
 			T item1 = itr1.next();
 			T item2 = itr2.next();
 			int compare;
@@ -182,6 +193,11 @@ public class SetOperationsOnList {
 		} else {
 			Iterator<T> itr1 = list1.iterator();
 			Iterator<T> itr2 = list2.iterator();
+			/**
+			 * item1 - Pointer pointing to current entry of list1
+			 * item2 - Pointer pointing to current entry of list2
+			 * compare - holds the comparison result.
+			 */
 			T item1 = itr1.next();
 			T item2 = itr2.next();
 			int compare;

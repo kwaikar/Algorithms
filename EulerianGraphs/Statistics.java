@@ -1,8 +1,9 @@
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
- * This class is a helper class that is responsible for Gathering and maintaining statistics. 
+ * This class is responsible for Gathering and maintaining statistics of the
  * 
  * @author kanchan
  *

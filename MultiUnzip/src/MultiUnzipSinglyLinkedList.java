@@ -1,8 +1,7 @@
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Stack;
+
 
 /**
  *  Extend the "unzip" algorithm discussed in class on Thu, Jan 21 to

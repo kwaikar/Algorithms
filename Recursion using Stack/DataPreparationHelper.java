@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -85,7 +86,7 @@ public class DataPreparationHelper {
 				for (int i = 0; i < s; i++) {
 					array[i] = in.nextInt();
 				}
-				System.out.println("Input Array: " + array);
+				System.out.println("Input Array: " + Arrays.toString(array));
 			} finally {
 				in.close();
 			}
