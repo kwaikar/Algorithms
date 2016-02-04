@@ -248,20 +248,29 @@ public class TopologicalOrdering {
 		Graph graphobject = Graph.readGraph(sc, true);
 
 		List<Vertex> topological_order = toplogicalOrder1(graphobject);
-
+		
 		System.out.println("The topological order after the implementation of algorithm1:");
+		System.out.println();
 
 		for (Vertex vertex : topological_order) {
 			System.out.print(" " + vertex.name);
 		}
-
+		System.out.println();
+		System.out.println();
+		System.out.println(" The Timer details");
+		
+		Timer.timer();
+		Timer.timer();
 		Stack<Vertex> topological_order2 = toplogicalOrder2(graphobject);
 		System.out.println();
+		
+		
 		System.out.println("The topological order after the implementation of algorithm2:");
 		
 		while (!((topological_order2).isEmpty())) {
 			System.out.print(" " + topological_order2.pop());
 		}
+		System.out.println();
 		System.out.println();
 		System.out.println(" The Timer details");
 		Timer.timer();
