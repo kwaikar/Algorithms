@@ -41,3 +41,10 @@ local.properties
 # STS (Spring Tool Suite)
 .springBeans
 /target/
+/Edge.class
+/EulerianGraphs.class
+/Graph$VertexIterator.class
+/Graph.class
+/Statistics.class
+/Vertex.class
+/SCCDetectionUsingKosarajuApproach.class
