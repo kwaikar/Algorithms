@@ -164,19 +164,7 @@ public class BigInt {
 		BigInt number =(BigInt) obj;
 		return this.toString().equalsIgnoreCase(number.toString());
 	}
-	
-	/**
-	 * Swaps num1 and num2 References
-	 * @param num1
-	 * @param num2
-	 */
-	private static void swap(BigInt num1,BigInt num2)
-	{
-	BigInt	output=num2;
-		num2=num1;
-		num1=output;
-		output=null;
-	}
+ 
 	/**
 	 * This Static method accepts two numbers and subtracts right from left. 
 	 * @param num1 - Number 1 
@@ -185,7 +173,7 @@ public class BigInt {
 	 */
 	public static BigInt subtract(  BigInt num1, BigInt num2) {
 		BigInt output = new BigInt();
-		boolean areBothNegative=false;
+		
 		if(num1.isPositive && !num2.isPositive)
 		{
 			num2.isPositive=true;
@@ -201,12 +189,11 @@ public class BigInt {
 			num1.isPositive=false;
 			return output;
 		}
-		else if(!num2.isPositive)
-		{
-			// num1 is negative too
-			areBothNegative=true;
-		}
 		
+		
+		/**
+		 * Find larger number and then subtract smaller from larger.
+		 */
 		if( num1.coefficients.size()==num2.coefficients.size())
 		{
 			int counter=num2.coefficients.size()-1;
@@ -214,20 +201,40 @@ public class BigInt {
 			 * num1 should contain bigger number and num2 should contain smaller number
 			 */
 			System.out.println(num1+":"+num2);
-			while(counter>=0 &&(num2.coefficients.get(counter)==num2.coefficients.get(counter)|| num1.coefficients.get(counter)>num2.coefficients.get(counter)))
+			while(counter>=0 &&(num1.coefficients.get(counter)==num2.coefficients.get(counter)|| num1.coefficients.get(counter)>num2.coefficients.get(counter)))
 			{
 				counter--;
 			}
-			if (counter!=0)
+			if (counter!=-1)
 			{
-				swap(num1,num2);
-				output.isPositive=!areBothNegative?false:true;
+				/**
+				 * Swaps should lead to sign reversal
+				 */
+				BigInt	temp=num2;
+				num2=num1;
+				num1=temp;
+				temp=null;
+				output.isPositive=!output.isPositive; 
 			}
 		}
 		else if(num2.coefficients.size()>num1.coefficients.size())
 		{
-			swap(num1, num2);
-			output.isPositive=!areBothNegative?false:true;
+			/**
+			 * Swaps should lead to sign reversal
+			 */
+			BigInt	temp=num2;
+			num2=num1;
+			num1=temp;
+			temp=null;
+			output.isPositive=!output.isPositive; 
+		}
+		
+		if(!num2.isPositive)
+		{
+			/**
+			 *  num1 is negative too, and num1 is smaller than num2, sign needs to be reversed!
+			 */
+			output.isPositive=!output.isPositive;
 		}
 
 		output.coefficients = new ArrayList<Integer>((num1.coefficients.size() > num2.coefficients.size()
@@ -242,12 +249,13 @@ public class BigInt {
 		
 		while (i < num1.coefficients.size() && i < num2.coefficients.size()) {
 			/**
-			 * Add both common coefficients
+			 * subtract common coefficients
 			 */
 			int valueToBeSubtracted = num2.coefficients.get(i) + (loan?1:0);
 			if(valueToBeSubtracted >num1.coefficients.get(i))
 			{
 				loan=true;
+				// Loan amount equal to the base.
 				output.coefficients.add(i,  ((num1.coefficients.get(i)+BASE)-num2.coefficients.get(i)));
 			}
 			else
@@ -261,7 +269,7 @@ public class BigInt {
 		
 		while (i != num1.coefficients.size()) {
 			/**
-			 * Loop over the larger number and add the coefficients after considering the carry to the output.
+			 * Loop over the larger number and add the coefficients after considering the loan.
 			 */
 			int temp = num1.coefficients.get(i) - (loan?1:0);
 			if( temp <0)
@@ -275,6 +283,9 @@ public class BigInt {
 				loan=false;
 			}
 		}
+		/**
+		 * Take care of numbers with leading zeros.
+		 */
 		int counter=output.coefficients.size()-1;
 		while(output.coefficients.get(counter)==0 && counter!=0)
 		{
@@ -287,7 +298,10 @@ public class BigInt {
 		
 		if(!output.isPositive)
 		{
-			swap(num1,num2);
+			BigInt	temp=num2;
+			num2=num1;
+			num1=temp;
+			temp=null;
 		}
 		return output;
 	}
@@ -306,6 +320,11 @@ public class BigInt {
 	}
 
 	public static void main(String[] args) {
+		System.out.println((BigInt.subtract(new BigInt(-6L), new BigInt(-9L))).toString().equals("3"));
+		System.out.println((BigInt.subtract(new BigInt(-9L), new BigInt(-6L))).toString().equals("-3"));
+		System.out.println((BigInt.subtract(new BigInt(9L), new BigInt(-6L))).toString().equals("15"));
+		System.out.println((BigInt.subtract(new BigInt(6L), new BigInt(-9L))).toString().equals("15"));
+		System.out.println((BigInt.subtract(new BigInt(6L), new BigInt(9L))).toString().equals("-3"));
 		BigInt xyz = new BigInt("004268");
 		System.out.println("Test case 1 status:" + xyz.toString().equals("4268"));
 		System.out.println("Test case 2 status:" + new BigInt(4268L).toString().equals("4268"));
