@@ -1,3 +1,7 @@
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * 
  * Binary Heap is heap data Structure. It is a binary tree with additional
@@ -5,16 +9,20 @@
  * 
  * It satisfies the complete binary tree property and Heap property(min and max
  * heap) This program implements the Binary heap data structure satisfying the
- * property of a Max Heap.
+ * property of a Min Heap.
  * 
  * 
  * @author M Krishna Kavya
  * 
  */
-public class BinaryHeap {
+public class BinaryHeap<T extends Comparable<? super T>> {
 
-	public static int lastIndex;
-	public static int[] heap = new int[0];
+	protected List<T> heap = null;
+	Comparable<T> comparator = null;
+	
+	public String toString() {
+		return (heap.toString());
+	};
 
 	/**
 	 * initialize the integer array with the maximum size. initialize few nodes
@@ -26,16 +34,32 @@ public class BinaryHeap {
 	 *            -size of the input array.
 	 */
 	BinaryHeap(int size) {
-		// max Heap.
-		heap = new int[size];
-		heap[0] = 0;
-		heap[1] = 100;
-		heap[2] = 79;
-		heap[3] = 90;
-		heap[4] = 68;
-		heap[5] = 72;
-		heap[6] = 89;
-		lastIndex = 6;
+		heap = new ArrayList<T>(size+1);
+	}
+	
+	/**
+	 * 
+	 * @return flag - whether heap is empty or not.
+	 */
+	boolean isEmpty()
+	{
+		if (heap==null || heap.size()==0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	/**
+	 * Adds x in to the heap.
+	 * 
+	 * @param x
+	 */
+	public void add(T x) {
+		insert(x);
 	}
 
 	/**
@@ -45,10 +69,9 @@ public class BinaryHeap {
 	 * @param value
 	 *            - value to be inserted.
 	 */
-	public void insert(int value) {
-		lastIndex = lastIndex + 1;
-		heap[lastIndex] = value;
-		percolateUp();
+	public void insert(T value) {
+		heap.add(value);
+		percolateUp(heap.size()-1);
 
 	}
 
@@ -59,80 +82,108 @@ public class BinaryHeap {
 	 * the nodes are changed and the new node is placed in a position that
 	 * satisfies Max Heap Property.
 	 */
-	public static void percolateUp() {
-		System.out.println("The element inserted now is " + heap[lastIndex]);
-		heap[0] = heap[lastIndex];
-		int i = lastIndex;
-		while (heap[i / 2] < heap[0]) {
-			heap[i] = heap[i / 2];
-			i = i / 2;
+	public void percolateUp(int i) {
+		T temp = heap.get(i);
+		while (temp.compareTo(heap.get(((i-1)/ 2))) < 0) {
+			heap.set(i,heap.get((i-1) / 2));
+			i = (i-1) / 2;
 		}
-		heap[i] = heap[0];
+		heap.set(i,temp);
 	}
 
 	/**
-	 * The method removes the element from the top. In a Max Heap . The root has
+	 * The method removes the element from the top. In a Min Heap . The root has
 	 * the highest value and is the first one to be deleted.
 	 * 
 	 * The root is replaced with last element in the element and percolate Down
 	 * operation is performed to restore Heap property.
 	 * 
 	 */
-	public void delete() {
-		int maximum = heap[1];
-		heap[1] = heap[lastIndex];
-		System.out.println("last element =" + heap[1]);
-		percolateDown(1);
-
+	public void deleteMin() {
+		remove();
 	}
-	
+
+	public T remove() {  
+		T minimum = heap.get(0);
+		percolateDown(heap.size()-1);
+		return minimum;
+	}
+
 	/**
-	 * The method checks the heap property.
-	 * The operation starts from the root node and is performed till the last level. 
-	 * The parent element should always have a greater value than child.
-	 * First condition if the element has two or only one child 
-	 * Case 1:   The greatest among the two replaces the parent node if any. 
-	 * Case 2:   Child  replaces the parent node if it is greater.
-	 * @param i- Index of the root 
+	 * Returns the minumum element.
+	 * 
+	 * @return
 	 */
-	public void percolateDown(int i) {
-		int x = heap[i];
-		int size = lastIndex - 1;
-		int index = 0;
-		while ((2 * i) <= size) {
-			if ((2 * i) == size) {
-				if (x < heap[size]) {
-					heap[i] = heap[size];
-					i = size;
-				} else {
-					break;
-				}
+	public T min() {
+		return peek();
+	}
 
-			} else {
-				if (heap[(2 * i)] >= heap[(2 * i) + 1]) {
-					index = 2 * i;
-				} else {
-					index = (2 * i) + 1;
-				}
+	/**
+	 * This returns the top element.
+	 * 
+	 * @return
+	 */
+	public T peek() {
+		return heap.get(0);
+	}
 
-				if (x < heap[index]) {
-					heap[i] = heap[index];
-					i = index;
-				} else {
-					break;
-				}
-
-			}
+	 
+	/**
+	 * The method checks the heap property. The operation starts from the root
+	 * node and is performed till the last level. The parent element should
+	 * always have a greater value than child. First condition if the element
+	 * has two or only one child Case 1: The greatest among the two replaces the
+	 * parent node if any. Case 2: Child replaces the parent node if it is
+	 * greater.
+	 * 
+	 * @param i-
+	 *            Index of the root
+	 */
+	public void percolateDown(int j) {
+			T itemToBePercolated = heap.get(j);
+		int i=0;
+		heap.set(0,itemToBePercolated);
+		heap.remove(j);
+		int index= -1;
+		T smallerChild=null;
+		while(i!=index && heap.size()>(2*i+1)){
+			
+		if( (2*i+2)<heap.size() && heap.get(2*i+1).compareTo(heap.get(2*i+2))>0)
+		{
+			smallerChild = heap.get(2*i+2);
+			index =2*i+2;
 		}
-		heap[i] = x;
-
+		else 
+		{	
+			smallerChild =heap.get(2*i+1);
+			index =2*i+1;
+		}
+		if(smallerChild.compareTo(itemToBePercolated)<0)
+		{
+			heap.set(index,itemToBePercolated);
+			heap.set(i,smallerChild);
+			i=index;
+			index=-1;
+		}
+		else
+		{
+			i=index;
+		}
+		}
 	}
-
 	public static void main(String[] args) {
-		BinaryHeap obj = new BinaryHeap(10);
-		obj.insert(102);
-		obj.delete();
-		System.out.println(heap[1]);
+		BinaryHeap obj = new BinaryHeap(1000000);
+		Timer time = new Timer();
+   		time.timer();
+   		for(int j=0;j<1000000;j++){
+			 obj.insert((int) ((Math.random()+2)*10));
+			 }
+   		System.out.println("Inserted 1000000 nodes");
+   		System.out.println("The deleted root:"+obj.remove());
+		
+		time.timer();
 	}
+
+
 
 }

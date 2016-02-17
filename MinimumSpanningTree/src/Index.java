@@ -4,13 +4,7 @@
 //                         instead of static functions in Ver 1.0
 
 public interface Index {
-    public void putIndex(int index);
-    public int getIndex();
-}
+	public void putIndex(int index);
 
-/* Ver 1.0:
-public interface Index<T> {
-    public void putIndex(T e, int index);
-    public int getIndex(T e);
+	public int getIndex();
 }
-*/

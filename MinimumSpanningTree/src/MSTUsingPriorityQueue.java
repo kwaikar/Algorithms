@@ -9,6 +9,7 @@ public class MSTUsingPriorityQueue {
 	 * Spanning tree. This implementation uses priorityQueue in order to select
 	 * the edge with minimum Weight
 	 * 
+	 * Space Complexity of this algorithm is O(E) where E is the number of edges in the graph. 
 	 * @param graph
 	 * @return
 	 */
@@ -60,7 +61,6 @@ public class MSTUsingPriorityQueue {
 		Vertex u =null;
 		Vertex v=null;
 		while (!queue.isEmpty()) {
-			System.out.println(queue);
 			Edge e = queue.remove();
 			if (!(e.getTo().isSeen() && e.getFrom().isSeen())) {
 
@@ -81,7 +81,6 @@ public class MSTUsingPriorityQueue {
 				 * Add the destination to the Tree, increase weight of the tree
 				 * by weight of the edge.
 				 */
-				System.out.println("->" + e);
 				v.setSeen(true);
 				v.setParent(u);
 				wMST += e.getWeight();

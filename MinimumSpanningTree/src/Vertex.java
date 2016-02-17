@@ -6,9 +6,10 @@
  */
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-public class Vertex {
+public class Vertex implements Comparable<Vertex>, Index{
 	private int name; // name of the vertex
 	private boolean seen; // flag to check if the vertex has already been
 							// visited
@@ -18,6 +19,24 @@ public class Vertex {
 									// ArrayList
 	private int count;
 	private int componentId;
+	private int index;
+	
+	
+
+	/**
+	 * Kanchan : Added for implementing Indexed binary heap.
+	 * @return the index
+	 */
+	public int getIndex() {
+		return index;
+	}
+
+	/**
+	 * @param index the index to set
+	 */
+	public void putIndex(int index) {
+		this.index = index;
+	}
 
 	/**
 	 * Constructor for the vertex
@@ -207,7 +226,13 @@ public class Vertex {
 	 * Method to represent a vertex by its name
 	 */
 	public String toString() {
-		return Integer.toString(name) ;
+		return Integer.toString(name)+":"+ distance ;
+	}
+
+
+	@Override
+	public int compareTo(Vertex o) {
+		return this.getDistance()-o.getDistance();
 	}
 	
 	
