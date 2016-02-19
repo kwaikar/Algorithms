@@ -102,7 +102,6 @@ public class BigInt {
 	 */
 	public static BigInt add(BigInt num1, BigInt num2) {
 		BigInt output = new BigInt();
-		System.out.println("adding" + num1 + ":" + num2);
 		if (!num2.isPositive && !num1.isPositive) {
 			output.isPositive = false;
 		} else if (!num2.isPositive) {
@@ -204,7 +203,7 @@ public class BigInt {
 			num2 = output;
 			num2.isPositive = true;
 		}
-		System.out.println(num1 + ":" + num2 + ":" + num1Main + ":" + num2Main);
+	//	System.out.println(num1 + ":" + num2 + ":" + num1Main + ":" + num2Main);
 		/**
 		 * Find larger number and then subtract smaller from larger.
 		 */
@@ -214,7 +213,7 @@ public class BigInt {
 			 * num1 should contain bigger number and num2 should contain smaller
 			 * number
 			 */
-			System.out.println(num1 + ":" + num2);
+		//	System.out.println(num1 + ":" + num2);
 			boolean flagEquals = true;
 			while (counter >= 0) {
 				if (num1.coefficients.get(counter) > num2.coefficients.get(counter)) {
@@ -298,7 +297,7 @@ public class BigInt {
 			if (valueToBeSubtracted > num1.coefficients.get(i)) {
 				loan = true;
 				// Loan amount equal to the base.
-				coefficients.add(i, ((num1.coefficients.get(i) + BASE) - num2.coefficients.get(i)));
+				coefficients.add(i, ((num1.coefficients.get(i) + BASE) - valueToBeSubtracted));
 			} else {
 				coefficients.add(i, ((num1.coefficients.get(i)) - valueToBeSubtracted));
 				loan = false;
@@ -320,12 +319,12 @@ public class BigInt {
 				loan = false;
 			}
 		}
-		System.out.println(num1+"-"+num2+"="+coefficients);
+		//System.out.println(num1+"-"+num2+"="+coefficients);
 		return coefficients;
 	}
 
 	public static BigInt multiply(BigInt num1, BigInt num2) {
-		System.out.println(num1 + "*" + num2);
+		//System.out.println(num1 + "*" + num2);
 		BigInt output = new BigInt();
 		if ((num1.coefficients.size() == 1 && num1.coefficients.get(0) == 0)
 				|| (num2.coefficients.size() == 1 && num2.coefficients.get(0) == 0)) {
@@ -336,7 +335,7 @@ public class BigInt {
 			output.isPositive = false;
 		}
 		output.coefficients = unsignedMultiple(num1, num2).coefficients;
-		System.out.println("|" + output + "|");
+	//	System.out.println("|" + output + "|");
 		return output;
 	}
 
@@ -358,12 +357,11 @@ public class BigInt {
 	 * @return
 	 */
 	private static BigInt unsignedMultiple(BigInt num1, BigInt num2) {
-		System.out.println(num1 + "__" + num2);
+	//	System.out.println(num1 + "__" + num2);
 
 		if (num1.coefficients.size() == 0 || num2.coefficients.size() == 0) {
 			return new BigInt(0L);
 		} else if (num1.coefficients.size() == 1 && num2.coefficients.size() == 1) {
-			System.out.println("entered");
 			BigInt output = new BigInt();
 			int temp = num1.coefficients.get(0) * num2.coefficients.get(0);
 			if (temp > BASE) {
@@ -403,8 +401,9 @@ public class BigInt {
 			BigInt ambm = unsignedMultiple(am, bm);
 			BigInt abMid = unsignedMultiple(BigInt.add(al, am), BigInt.add(bl, bm));
 			BigInt ab = BigInt.subtract(BigInt.subtract(abMid, albl), ambm);
-			if (num1.coefficients.size() == num2.coefficients.size()) {
-				System.out.println("==>" + num1 + ":" + num2 + " : " + k);
+
+			
+			System.out.println("------------------------------------>" + num1 + ":" + num2 + " : " + k);
 				System.out.println("Computing ab:" + BigInt.add(al, am) + " * " + BigInt.add(bl, bm) + "=" + abMid + "-"
 						+ albl + "-" + ambm);
 				System.out.println("BigInt.subtract(abMid, albl)=" + BigInt.subtract(abMid, albl));
@@ -416,16 +415,11 @@ public class BigInt {
 
 				ab.shift(k);
 				ambm.shift((2 * k));
-				System.out.println(
-						"====>" + (al) + "*" + bl + "=" + albl + "," + (am) + "*" + bm + "=" + ambm + " : " + ab);
-			} else {
-				ab.shift(k);
-				ambm.shift(2 * k);
-			}
 
-			// System.out.println((al)+"*"+bl+"="+albl+ ","+(am)+"*"+bm+"=" +
-			// ambm+ " : " + ab);
 
+			System.out.println(
+					"====>" + (al) + "*" + bl + "=" + albl + "," + (am) + "*" + bm + "=" + ambm + " : " + ab);
+			System.out.println("total="+BigInt.add(BigInt.add(albl, ab), ambm));
 			return BigInt.add(BigInt.add(albl, ab), ambm);
 
 		}
@@ -450,6 +444,7 @@ public class BigInt {
 		loader.setDefaultAssertionStatus(true);
 		// assertCustom((BigInt.subtract(new BigInt(-9L), new
 		// BigInt(-6L))),"-3");
+		assertCustom((BigInt.subtract(new BigInt(504L), new BigInt(48L))), "456");
 
 		assertCustom((BigInt.subtract(new BigInt(-6L), new BigInt(-9L))), "3");
 
@@ -471,11 +466,12 @@ public class BigInt {
 		assertCustom(BigInt.multiply(new BigInt(11L), new BigInt(11L)), "121");
 		assertCustom(BigInt.multiply(new BigInt(71L), new BigInt(38L)), "2698");
 
+
 		assertCustom((BigInt.subtract(new BigInt(80L), new BigInt(21L))), "59");
 		assertCustom(BigInt.multiply(new BigInt(11L), new BigInt(5L)), "55");
 		assertCustom(BigInt.multiply(new BigInt(1L), new BigInt(1L)), "1");
-		assertCustom(BigInt.multiply(new BigInt(12345L), new BigInt(6789L)), "83810205");
-		assertCustom(BigInt.multiply(new BigInt(12345L), new BigInt(6789L)), "8381205");
+		assertCustom(BigInt.multiply(new BigInt(168L), new BigInt(156L)), "26208"); 
+		assertCustom(BigInt.multiply(new BigInt(12345L), new BigInt(6789L)), "83810205"); 
 		System.out.println(BigInt.multiply(new BigInt(12345L), new BigInt(6789L)));
 	}
 
