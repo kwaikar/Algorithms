@@ -63,7 +63,7 @@ public class BigInt {
 				/**
 				 * Valid input. remove first zeros.
 				 */
-				while (input.length()>0 && input.charAt(0) == '0') {
+				while (input.length() > 0 && input.charAt(0) == '0') {
 					input = input.replaceFirst("0", "");
 				}
 				if (input.length() > 0) {
@@ -168,7 +168,7 @@ public class BigInt {
 	@Override
 	public boolean equals(Object obj) {
 		BigInt number = (BigInt) obj;
-		return this.toString().equalsIgnoreCase(number.toString());
+		return this.toBaseString().equalsIgnoreCase(number.toBaseString());
 	}
 
 	/**
@@ -203,7 +203,8 @@ public class BigInt {
 			num2 = output;
 			num2.isPositive = true;
 		}
-	//	System.out.println(num1 + ":" + num2 + ":" + num1Main + ":" + num2Main);
+		// System.out.println(num1 + ":" + num2 + ":" + num1Main + ":" +
+		// num2Main);
 		/**
 		 * Find larger number and then subtract smaller from larger.
 		 */
@@ -213,7 +214,7 @@ public class BigInt {
 			 * num1 should contain bigger number and num2 should contain smaller
 			 * number
 			 */
-		//	System.out.println(num1 + ":" + num2);
+			// System.out.println(num1 + ":" + num2);
 			boolean flagEquals = true;
 			while (counter >= 0) {
 				if (num1.coefficients.get(counter) > num2.coefficients.get(counter)) {
@@ -234,7 +235,6 @@ public class BigInt {
 				}
 				counter--;
 			}
-
 
 			if (flagEquals) {
 				return new BigInt(0L);
@@ -279,7 +279,7 @@ public class BigInt {
 	 * @return
 	 */
 	public static List<Integer> unsignedSubtract(BigInt num1, BigInt num2) {
-		List<Integer>coefficients = new ArrayList<Integer>((num1.coefficients.size() > num2.coefficients.size()
+		List<Integer> coefficients = new ArrayList<Integer>((num1.coefficients.size() > num2.coefficients.size()
 				? num1.coefficients.size() : num2.coefficients.size()));
 		/**
 		 * i - Counter for looping through coefficient arrays carry - Boolean
@@ -319,12 +319,12 @@ public class BigInt {
 				loan = false;
 			}
 		}
-		//System.out.println(num1+"-"+num2+"="+coefficients);
+		// System.out.println(num1+"-"+num2+"="+coefficients);
 		return coefficients;
 	}
 
 	public static BigInt multiply(BigInt num1, BigInt num2) {
-		//System.out.println(num1 + "*" + num2);
+		// System.out.println(num1 + "*" + num2);
 		BigInt output = new BigInt();
 		if ((num1.coefficients.size() == 1 && num1.coefficients.get(0) == 0)
 				|| (num2.coefficients.size() == 1 && num2.coefficients.get(0) == 0)) {
@@ -335,14 +335,18 @@ public class BigInt {
 			output.isPositive = false;
 		}
 		output.coefficients = unsignedMultiple(num1, num2).coefficients;
-	//	System.out.println("|" + output + "|");
+		// System.out.println("|" + output + "|");
 		return output;
 	}
- 
+
 	/**
-	 * This function implements Power function for positive as well as negative numbers
-	 * @param x - number to be calculated power of
-	 * @param n - power value
+	 * This function implements Power function for positive as well as negative
+	 * numbers
+	 * 
+	 * @param x
+	 *            - number to be calculated power of
+	 * @param n
+	 *            - power value
 	 * @return - Signed power value calculated on x
 	 */
 	public static BigInt power(BigInt x, int n) {
@@ -351,16 +355,15 @@ public class BigInt {
 		} else if (n == 1) {
 			return x;
 		} else {
-			BigInt res = power(BigInt.multiply(x , x), n / 2);
+			BigInt res = power(BigInt.multiply(x, x), n / 2);
 			if (n % 2 == 0) {
 				return res;
 			} else {
-				return  BigInt.multiply(res , x);
+				return BigInt.multiply(res, x);
 			}
 		}
 	}
 
-	
 	public BigInt shift(int n) {
 		if (n > 0) {
 			for (int i = 0; i < n; i++) {
@@ -379,7 +382,7 @@ public class BigInt {
 	 * @return
 	 */
 	private static BigInt unsignedMultiple(BigInt num1, BigInt num2) {
-	//	System.out.println(num1 + "__" + num2);
+		// System.out.println(num1 + "__" + num2);
 
 		if (num1.coefficients.size() == 0 || num2.coefficients.size() == 0) {
 			return new BigInt(0L);
@@ -413,49 +416,41 @@ public class BigInt {
 
 			BigInt al = new BigInt(new ArrayList<Integer>(new ArrayList<Integer>(num1.coefficients.subList(0, k))));
 			BigInt bl = new BigInt(new ArrayList<Integer>(new ArrayList<Integer>(num2.coefficients.subList(0, k))));
-
 			BigInt am = new BigInt(new ArrayList<Integer>(
 					new ArrayList<Integer>(num1.coefficients.subList(k, num1.coefficients.size()))));
 			BigInt bm = new BigInt(new ArrayList<Integer>(
 					new ArrayList<Integer>(num2.coefficients.subList(k, num2.coefficients.size()))));
-
 			BigInt albl = unsignedMultiple(al, bl);
 			BigInt ambm = unsignedMultiple(am, bm);
 			BigInt abMid = unsignedMultiple(BigInt.add(al, am), BigInt.add(bl, bm));
 			BigInt ab = BigInt.subtract(BigInt.subtract(abMid, albl), ambm);
-
-			
-			System.out.println("------------------------------------>" + num1 + ":" + num2 + " : " + k);
-				System.out.println("Computing ab:" + BigInt.add(al, am) + " * " + BigInt.add(bl, bm) + "=" + abMid + "-"
-						+ albl + "-" + ambm);
-				System.out.println("BigInt.subtract(abMid, albl)=" + BigInt.subtract(abMid, albl));
-				BigInt temp = BigInt.subtract(abMid, albl);
-				System.out.println("temp-" + temp + "---" + BigInt.subtract(temp, ambm));
-				System.out.println("BigInt.subtract(BigInt.subtract(abMid, albl),ambm)"
-						+ BigInt.subtract(BigInt.subtract(abMid, albl), ambm));
-				System.out.println("ab=" + ab);
-
-				ab.shift(k);
-				ambm.shift((2 * k));
-
-
-			System.out.println(
-					"====>" + (al) + "*" + bl + "=" + albl + "," + (am) + "*" + bm + "=" + ambm + " : " + ab);
-			System.out.println("total="+BigInt.add(BigInt.add(albl, ab), ambm));
+			ab.shift(k);
+			ambm.shift((2 * k));
 			return BigInt.add(BigInt.add(albl, ab), ambm);
 
 		}
 	}
 
 	/**
+	 * printList(): Print the base + ":" + elements of the list, separated by
+	 * spaces.
+	 */
+	public String printList() {
+		StringBuilder sb = new StringBuilder(BASE + ":");
+		for (Integer integer : coefficients) {
+			sb.append(" " + integer);
+		}
+		return this.isPositive ? sb.reverse().toString() : "-" + sb.reverse().toString();
+	}
+
+	/**
 	 * String toString(): convert the XYZ class object into its equivalent
 	 * string (in decimal). There should be no leading zeroes in the string.
 	 */
-	@Override
-	public String toString() {
+	public String toBaseString() {
 		StringBuilder sb = new StringBuilder();
 		for (Integer integer : coefficients) {
-			sb.append(integer);
+			sb.append( integer);
 		}
 		return this.isPositive ? sb.reverse().toString() : "-" + sb.reverse().toString();
 	}
@@ -464,7 +459,7 @@ public class BigInt {
 		ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
 		ClassLoader loader = ClassLoader.getSystemClassLoader();
 		loader.setDefaultAssertionStatus(true);
-		 assertCustom((BigInt.subtract(new BigInt(-9L), new  BigInt(-6L))),"-3");
+		assertCustom((BigInt.subtract(new BigInt(-9L), new BigInt(-6L))), "-3");
 		assertCustom((BigInt.subtract(new BigInt(504L), new BigInt(48L))), "456");
 		assertCustom((BigInt.subtract(new BigInt(-6L), new BigInt(-9L))), "3");
 		assertCustom((BigInt.subtract(new BigInt(9L), new BigInt(-6L))), "15");
@@ -487,20 +482,20 @@ public class BigInt {
 		assertCustom((BigInt.subtract(new BigInt(80L), new BigInt(21L))), "59");
 		assertCustom(BigInt.multiply(new BigInt(11L), new BigInt(5L)), "55");
 		assertCustom(BigInt.multiply(new BigInt(1L), new BigInt(1L)), "1");
-		assertCustom(BigInt.multiply(new BigInt(168L), new BigInt(156L)), "26208"); 
-		assertCustom(BigInt.multiply(new BigInt(12345L), new BigInt(6789L)), "83810205"); 
-		assertCustom(BigInt.multiply(new BigInt(12345L), new BigInt(-6789L)), "-83810205"); 
-		assertCustom(BigInt.multiply(new BigInt(-12345L), new BigInt(6789L)), "-83810205"); 
-		assertCustom(BigInt.power(new BigInt(11L), 2), "121"); 
-		assertCustom(BigInt.power(new BigInt(11L), 5), "161051"); 
+		assertCustom(BigInt.multiply(new BigInt(168L), new BigInt(156L)), "26208");
+		assertCustom(BigInt.multiply(new BigInt(12345L), new BigInt(6789L)), "83810205");
+		assertCustom(BigInt.multiply(new BigInt(12345L), new BigInt(-6789L)), "-83810205");
+		assertCustom(BigInt.multiply(new BigInt(-12345L), new BigInt(6789L)), "-83810205");
+		assertCustom(BigInt.power(new BigInt(11L), 2), "121");
+		assertCustom(BigInt.power(new BigInt(11L), 5), "161051");
 
-		assertCustom(BigInt.power(new BigInt(-11L), 2), "121"); 
-		assertCustom(BigInt.power(new BigInt(-11L), 5), "-161051"); 
-		
+		assertCustom(BigInt.power(new BigInt(-11L), 2), "121");
+		assertCustom(BigInt.power(new BigInt(-11L), 5), "-161051");
+
 	}
 
 	public static void assertCustom(BigInt value, String check) {
-		if (!value.toString().equals(check)) {
+		if (!value.toBaseString().equals(check)) {
 			System.out.println("Msmatch: " + value + " : expected : " + check);
 			throw new AssertionError();
 		}
