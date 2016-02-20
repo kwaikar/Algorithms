@@ -338,7 +338,29 @@ public class BigInt {
 	//	System.out.println("|" + output + "|");
 		return output;
 	}
+ 
+	/**
+	 * This function implements Power function for positive as well as negative numbers
+	 * @param x - number to be calculated power of
+	 * @param n - power value
+	 * @return - Signed power value calculated on x
+	 */
+	public static BigInt power(BigInt x, int n) {
+		if (n == 0) {
+			return new BigInt(1L);
+		} else if (n == 1) {
+			return x;
+		} else {
+			BigInt res = power(BigInt.multiply(x , x), n / 2);
+			if (n % 2 == 0) {
+				return res;
+			} else {
+				return  BigInt.multiply(res , x);
+			}
+		}
+	}
 
+	
 	public BigInt shift(int n) {
 		if (n > 0) {
 			for (int i = 0; i < n; i++) {
@@ -442,12 +464,9 @@ public class BigInt {
 		ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
 		ClassLoader loader = ClassLoader.getSystemClassLoader();
 		loader.setDefaultAssertionStatus(true);
-		// assertCustom((BigInt.subtract(new BigInt(-9L), new
-		// BigInt(-6L))),"-3");
+		 assertCustom((BigInt.subtract(new BigInt(-9L), new  BigInt(-6L))),"-3");
 		assertCustom((BigInt.subtract(new BigInt(504L), new BigInt(48L))), "456");
-
 		assertCustom((BigInt.subtract(new BigInt(-6L), new BigInt(-9L))), "3");
-
 		assertCustom((BigInt.subtract(new BigInt(9L), new BigInt(-6L))), "15");
 		assertCustom((BigInt.subtract(new BigInt(6L), new BigInt(-9L))), "15");
 		assertCustom((BigInt.subtract(new BigInt(6L), new BigInt(9L))), "-3");
@@ -465,14 +484,19 @@ public class BigInt {
 		assertCustom((BigInt.subtract(new BigInt(-99L), new BigInt(-99L))), "0");
 		assertCustom(BigInt.multiply(new BigInt(11L), new BigInt(11L)), "121");
 		assertCustom(BigInt.multiply(new BigInt(71L), new BigInt(38L)), "2698");
-
-
 		assertCustom((BigInt.subtract(new BigInt(80L), new BigInt(21L))), "59");
 		assertCustom(BigInt.multiply(new BigInt(11L), new BigInt(5L)), "55");
 		assertCustom(BigInt.multiply(new BigInt(1L), new BigInt(1L)), "1");
 		assertCustom(BigInt.multiply(new BigInt(168L), new BigInt(156L)), "26208"); 
 		assertCustom(BigInt.multiply(new BigInt(12345L), new BigInt(6789L)), "83810205"); 
-		System.out.println(BigInt.multiply(new BigInt(12345L), new BigInt(6789L)));
+		assertCustom(BigInt.multiply(new BigInt(12345L), new BigInt(-6789L)), "-83810205"); 
+		assertCustom(BigInt.multiply(new BigInt(-12345L), new BigInt(6789L)), "-83810205"); 
+		assertCustom(BigInt.power(new BigInt(11L), 2), "121"); 
+		assertCustom(BigInt.power(new BigInt(11L), 5), "161051"); 
+
+		assertCustom(BigInt.power(new BigInt(-11L), 2), "121"); 
+		assertCustom(BigInt.power(new BigInt(-11L), 5), "-161051"); 
+		
 	}
 
 	public static void assertCustom(BigInt value, String check) {
