@@ -48,3 +48,8 @@ local.properties
 /Statistics.class
 /Vertex.class
 /SCCDetectionUsingKosarajuApproach.class
+/Graph$VIterator.class
+/EulerVertex.class
+/VertexBase.class
+/EulerEdge.class
+/EulerTrail.class

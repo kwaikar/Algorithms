@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Vertex {
-	private int name; // name of the vertex
-	private boolean seen; // flag to check if the vertex has already been
+	protected int name; // name of the vertex
+	protected boolean seen; // flag to check if the vertex has already been
 							// visited
-	private Vertex parent; // parent of the vertex
-	private int distance; // distance to the vertex from the source vertex
-	private List<Edge> Adj, revAdj; // adjacency list; use LinkedList or
+	protected Vertex parent; // parent of the vertex
+	protected int distance; // distance to the vertex from the source vertex
+	private List  Adj, revAdj; // adjacency list; use LinkedList or
 									// ArrayList
 
 	/**
@@ -108,7 +108,7 @@ public class Vertex {
 	/**
 	 * @return the adj
 	 */
-	public List<Edge> getAdj() {
+	public List<?extends Edge>  getAdj() {
 		return Adj;
 	}
 
@@ -117,7 +117,7 @@ public class Vertex {
 	/**
 	 * @param adj the adj to set
 	 */
-	public void setAdj(List<Edge> adj) {
+	public void setAdj(List  adj) {
 		Adj = adj;
 	}
 
@@ -126,7 +126,7 @@ public class Vertex {
 	/**
 	 * @return the revAdj
 	 */
-	public List<Edge> getRevAdj() {
+	public List<?extends Edge>  getRevAdj() {
 		return revAdj;
 	}
 
@@ -135,7 +135,7 @@ public class Vertex {
 	/**
 	 * @param revAdj the revAdj to set
 	 */
-	public void setRevAdj(List<Edge> revAdj) {
+	public void setRevAdj(List  revAdj) {
 		this.revAdj = revAdj;
 	}
 

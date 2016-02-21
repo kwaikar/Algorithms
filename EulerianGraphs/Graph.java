@@ -9,21 +9,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-class Graph implements Iterable<Vertex> {
-    private List<Vertex> verts; // array of vertices
+class Graph implements Iterable<EulerVertex> {
+    private List<EulerVertex> verts; // array of vertices
     private int numNodes; // number of verices in the graph
 
     /**
 	 * @return the verts
 	 */
-	public List<Vertex> getVerts() {
+	public List<EulerVertex> getVerts() {
 		return verts;
 	}
 
 	/**
 	 * @param verts the verts to set
 	 */
-	public void setVerts(List<Vertex> verts) {
+	public void setVerts(List<EulerVertex> verts) {
 		this.verts = verts;
 	}
 
@@ -37,31 +37,31 @@ class Graph implements Iterable<Vertex> {
 	numNodes = size;
 	verts = new ArrayList<>(size + 1);
 	verts.add(0, null);
-	// create an array of Vertex objects
+	// create an array of EulerVertex objects
 	for (int i = 1; i <= size; i++)
-	    verts.add(i, new Vertex(i));
+	    verts.add(i, new EulerVertex(i));
     }
 
     /**
-     * Method to add an edge to the graph
+     * Method to add an EulerEdge to the graph
      * 
      * @param a
-     *            : int - one end of edge
+     *            : int - one end of EulerEdge
      * @param b
-     *            : int - other end of edge
+     *            : int - other end of EulerEdge
      * @param weight
-     *            : int - the weight of the edge
+     *            : int - the weight of the EulerEdge
      */
     void addEdge(int a, int b, int weight) {
-	Vertex u = verts.get(a);
-	Vertex v = verts.get(b);
-	Edge e = new Edge(u, v, weight);
+	EulerVertex u = verts.get(a);
+	EulerVertex v = verts.get(b);
+	EulerEdge e = new EulerEdge(u, v, weight);
 	u.getAdj().add(e);
 	v.getAdj().add(e);
     }
 
     /**
-     * Method to add an arc (directed edge) to the graph
+     * Method to add an arc (directed EulerEdge) to the graph
      * 
      * @param a
      *            : int - the head of the arc
@@ -71,9 +71,9 @@ class Graph implements Iterable<Vertex> {
      *            : int - the weight of the arc
      */
     void addDirectedEdge(int a, int b, int weight) {
-	Vertex head = verts.get(a);
-	Vertex tail = verts.get(b);
-	Edge e = new Edge(head, tail, weight);
+	EulerVertex head = verts.get(a);
+	EulerVertex tail = verts.get(b);
+	EulerEdge e = new EulerEdge(head, tail, weight);
 	head.getAdj().add(e);
 	tail.getRevAdj().add(e);
     }
@@ -82,7 +82,7 @@ class Graph implements Iterable<Vertex> {
     /**
      * Method to create an instance of VertexIterator
      */
-    public Iterator<Vertex> iterator() {
+    public Iterator<EulerVertex> iterator() {
 	return new VertexIterator();
     }
 
@@ -90,10 +90,10 @@ class Graph implements Iterable<Vertex> {
      * A Custom Iterator Class for iterating through the vertices in a graph
      * 
      *
-     * @param <Vertex>
+     * @param <EulerVertex>
      */
-    private class VertexIterator implements Iterator<Vertex> {
-	private Iterator<Vertex> it;
+    private class VertexIterator implements Iterator<EulerVertex> {
+	private Iterator<EulerVertex> it;
 	/**
 	 * Constructor for VertexIterator
 	 * 
@@ -108,7 +108,7 @@ class Graph implements Iterable<Vertex> {
 	}
 
 	/**
-	 * Method to check if there is any vertex left in the iteration
+	 * Method to check if there is any EulerVertex left in the iteration
 	 * Overrides the default hasNext() method of Iterator Class
 	 */
 	public boolean hasNext() {
@@ -116,15 +116,15 @@ class Graph implements Iterable<Vertex> {
 	}
 
 	/**
-	 * Method to return the next Vertex object in the iteration
+	 * Method to return the next EulerVertex object in the iteration
 	 * Overrides the default next() method of Iterator Class
 	 */
-	public Vertex next() {
+	public EulerVertex next() {
 	    return it.next();
 	}
 
 	/**
-	 * Throws an error if a vertex is attempted to be removed
+	 * Throws an error if a EulerVertex is attempted to be removed
 	 */
 	public void remove() {
 	    throw new UnsupportedOperationException();
