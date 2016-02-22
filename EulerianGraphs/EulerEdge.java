@@ -61,7 +61,14 @@ public class EulerEdge extends  Edge{
 	}
 
 
-
+	public EulerEdge reverse()
+	{
+		EulerVertex temp = from;
+		from=to;
+		to=temp;
+		temp=null;
+		return this;
+	}
 	/**
 	 * Method to find the other end end of the arc given a vertex reference
 	 * 

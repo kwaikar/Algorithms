@@ -13,80 +13,42 @@ public class EulerTrail {
 	 * @param g
 	 * @return
 	 */
-	public static List<Vertex> findEulerTour(Graph graph) {
-		List<Vertex> eulerTour = new LinkedList<Vertex>();
-		Stack<Vertex> tempStack = new Stack<Vertex>();
+
+	public static List<EulerEdge> findEulerTourComponents(Graph graph) {
+
+		List<EulerEdge> finalEulerTour = new LinkedList<EulerEdge>();
+		/**
+		 * Initialize
+		 */
 		for (Vertex vertex : graph) {
 			vertex.setSeen(false);
 		}
 
-		int componentId = 0;
-		EulerVertex vertex = graph.getVerts().get(1);
-		if (!vertex.seen) {
-			tempStack.add(vertex);
-			componentId++;
-			vertex.setSeen(true);
-			System.out.println("Moving:" + componentId);
-			EulerVertex root = vertex;
-			EulerVertex current = root;
-			do {
-				System.out.println("current:" + current);
-				current.setSeen(true);
-				current.setComponentId(componentId);
-				EulerEdge edge = null;
-				for (EulerEdge eulerEdge : current.getAdj()) {
-					if (!eulerEdge.isDisabled()) {
-						edge = eulerEdge;
-						break;
-					}
-				}
-				if (edge != null) {
-					System.out.println(edge);
-					tempStack.add(edge.getTo());
-					edge.setDisabled(true);
-					current = edge.otherEnd(current);
-				}
-			} while (current != root);
-			/**
-			 * Add Root
-			 */
-			eulerTour.add(tempStack.pop());
-		}
-
-		return eulerTour;
-	}
-
-	public static List<EulerVertex> findEulerTourComponents(Graph graph) {
-
-		List<EulerVertex> finalEulerTour = new LinkedList<EulerVertex>();
-		for (Vertex vertex : graph) {
-			vertex.setSeen(false);
-		}
-
+		/**
+		 * Invariants: componentId : Used for identifying different cycles that
+		 * exist in the graph. vertex : Loop Invariant for looping through all
+		 * vertices root : Root of the intermediary cycle.
+		 */
 		int componentId = 0;
 		for (EulerVertex vertex : graph) {
 
 			if (!vertex.seen) {
 				componentId++;
 				vertex.setSeen(true);
-				System.out.println("Moving:" + componentId);
 				EulerVertex root = vertex;
 				EulerVertex current = root;
-				List<EulerVertex> eulerTour = new LinkedList<EulerVertex>();
-				List<EulerVertex> beforeRoot = new LinkedList<EulerVertex>();
+				List<EulerEdge> eulerTour = new LinkedList<EulerEdge>();
+				List<EulerEdge> beforeRoot = new LinkedList<EulerEdge>();
 				EulerVertex currentRoot = null;
 				do {
-					System.out.println("current:" + current);
 					current.setSeen(true);
 					if (currentRoot == null && current.getComponentId() != 0) {
-						beforeRoot = new LinkedList<EulerVertex>(eulerTour);
+						beforeRoot = new LinkedList<EulerEdge>(eulerTour);
 						eulerTour = new LinkedList<>();
 						currentRoot = current;
-						System.out.println("Found: " + beforeRoot + "  :" + eulerTour);
 					} else {
 						current.setComponentId(componentId);
 					}
-					eulerTour.add(current);
 					EulerEdge edge = null;
 					for (EulerEdge eulerEdge : current.getAdj()) {
 						if (!eulerEdge.isDisabled()) {
@@ -95,8 +57,10 @@ public class EulerTrail {
 						}
 					}
 					if (edge != null) {
-						System.out.println(edge);
+					//	System.out.println("adding:" + edge);
 						edge.setDisabled(true);
+
+						eulerTour.add(edge.getFrom() == current ? edge : edge.reverse());
 						current = edge.otherEnd(current);
 					}
 				} while (current != root);
@@ -118,22 +82,24 @@ public class EulerTrail {
 		System.out.println(finalEulerTour);
 		return finalEulerTour;
 	}
-
-	private static List<EulerVertex> mergeCycle(List<EulerVertex> primaryCycle, List<EulerVertex> cycleToBeMerged) {
+	
+	private static List<EulerEdge> mergeCycle(List<EulerEdge> primaryCycle, List<EulerEdge> cycleToBeMerged) {
 		if (primaryCycle == null || primaryCycle.size() == 0) {
 			primaryCycle = cycleToBeMerged;
 		} else {
-			System.out.println("Merging " + primaryCycle + " : " + cycleToBeMerged);
-			Vertex root = cycleToBeMerged.get(0);
+		//	System.out.println("Merging " + primaryCycle + " : " + cycleToBeMerged);
+			EulerEdge root = cycleToBeMerged.get(0);
 			Integer index = -1;
 			for (int i = 0; i < primaryCycle.size(); i++) {
-				EulerVertex vertex = primaryCycle.get(i);
-				if (vertex == root) {
+				EulerEdge vertex = primaryCycle.get(i);
+				if (root.getFrom() == vertex.getFrom()) {
 					index = i;
+				} else if (root.getFrom() == vertex.getTo()) {
+					index = i + 1;
 				}
 			}
 			primaryCycle.addAll(index, cycleToBeMerged);
-			System.out.println(primaryCycle);
+		//	System.out.println(primaryCycle);
 		}
 		return primaryCycle;
 	}
