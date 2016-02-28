@@ -22,9 +22,40 @@ public class Edge {
 		to = v;
 		weight = w;
 	}
+	
+	public static <E extends Edge> Edge getInstance(Vertex u, Vertex v, int w)
+	{
+		return new Edge(u,v,w);
+	}
+	
+	
+	/**
+	 * @param from the from to set
+	 */
+	public void setFrom(Vertex from) {
+		this.from = from;
+	}
 
-	
-	
+
+
+	/**
+	 * @param to the to to set
+	 */
+	public void setTo(Vertex to) {
+		this.to = to;
+	}
+
+
+
+	/**
+	 * @param weight the weight to set
+	 */
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
+
+
+
 	/**
 	 * @return the from
 	 */

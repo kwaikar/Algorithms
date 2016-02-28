@@ -9,6 +9,9 @@ import java.util.List;
  */
 public class BigInt {
 
+	private static final BigInt BIG_TWO = new BigInt(2L);
+	private static final BigInt BIG_ZERO = new BigInt(0L);
+	private static final BigInt BIG_ONE = new BigInt(1L);
 	List<Integer> coefficients = null;
 	public static final int BASE = 10;
 	public boolean isPositive = true;
@@ -237,7 +240,7 @@ public class BigInt {
 			}
 
 			if (flagEquals) {
-				return new BigInt(0L);
+				return BIG_ZERO;
 			}
 		} else if (num2.coefficients.size() > num1.coefficients.size()) {
 			/**
@@ -351,7 +354,7 @@ public class BigInt {
 	 */
 	public static BigInt power(BigInt x, int n) {
 		if (n == 0) {
-			return new BigInt(1L);
+			return BIG_ONE;
 		} else if (n == 1) {
 			return x;
 		} else {
@@ -362,6 +365,35 @@ public class BigInt {
 				return BigInt.multiply(res, x);
 			}
 		}
+	}
+	
+	public static BigInt power(BigInt x, BigInt n) {
+		if (n == BIG_ZERO) {
+			return BIG_ONE;
+		} else if (n == BIG_ONE) {
+			return x;
+		} else {
+			BigInt res = power(BigInt.multiply(x, x), BigInt.divide(n ,BIG_TWO));
+			if (BigInt.mod(n, BIG_TWO)== BIG_ZERO) {
+				return res;
+			} else {
+				return BigInt.multiply(res, x);
+			}
+		}
+	}
+	public static BigInt divide(BigInt x, BigInt y) {
+	
+		/**
+		 * This function returns the divided value. Once donce, please enable test cases related to power(BigIng,Bigint)
+		 */
+		return null;
+	}
+	public static BigInt mod(BigInt x, BigInt y) {
+		
+		/**
+		 * This function returns the mod value. Once donce, please enable test cases related to power(BigIng,Bigint)
+		 */
+		return null;
 	}
 
 	public BigInt shift(int n) {
@@ -385,7 +417,7 @@ public class BigInt {
 		// System.out.println(num1 + "__" + num2);
 
 		if (num1.coefficients.size() == 0 || num2.coefficients.size() == 0) {
-			return new BigInt(0L);
+			return BIG_ZERO;
 		} else if (num1.coefficients.size() == 1 && num2.coefficients.size() == 1) {
 			BigInt output = new BigInt();
 			int temp = num1.coefficients.get(0) * num2.coefficients.get(0);
@@ -469,7 +501,7 @@ public class BigInt {
 		assertCustom(xyz, "4268");
 		assertCustom(new BigInt(4268L), "4268");
 		assertCustom(new BigInt(new Long(4268)), "4268");
-		assertCustom((BigInt.add(new BigInt(999L), new BigInt(1L))), "1000");
+		assertCustom((BigInt.add(new BigInt(999L), BIG_ONE)), "1000");
 		assertCustom((BigInt.add(new BigInt(99L), new BigInt(99L))), "198");
 		assertCustom((BigInt.add(new BigInt(-99L), new BigInt(-99L))), "-198");
 		assertCustom(BigInt.subtract(new BigInt(99L), new BigInt(99L)), "0");
@@ -481,7 +513,7 @@ public class BigInt {
 		assertCustom(BigInt.multiply(new BigInt(71L), new BigInt(38L)), "2698");
 		assertCustom((BigInt.subtract(new BigInt(80L), new BigInt(21L))), "59");
 		assertCustom(BigInt.multiply(new BigInt(11L), new BigInt(5L)), "55");
-		assertCustom(BigInt.multiply(new BigInt(1L), new BigInt(1L)), "1");
+		assertCustom(BigInt.multiply(BIG_ONE, BIG_ONE), "1");
 		assertCustom(BigInt.multiply(new BigInt(168L), new BigInt(156L)), "26208");
 		assertCustom(BigInt.multiply(new BigInt(12345L), new BigInt(6789L)), "83810205");
 		assertCustom(BigInt.multiply(new BigInt(12345L), new BigInt(-6789L)), "-83810205");
@@ -492,6 +524,11 @@ public class BigInt {
 		assertCustom(BigInt.power(new BigInt(-11L), 2), "121");
 		assertCustom(BigInt.power(new BigInt(-11L), 5), "-161051");
 
+		
+	//	assertCustom(BigInt.power(new BigInt(11L), new BigInt(2L)), "121");
+	//	assertCustom(BigInt.power(new BigInt(11L), new BigInt(5L)), "161051");
+	//	assertCustom(BigInt.power(new BigInt(-11L),new BigInt( 2L)), "121");
+	//	assertCustom(BigInt.power(new BigInt(-11L), new BigInt(5L)), "-161051");
 	}
 
 	public static void assertCustom(BigInt value, String check) {

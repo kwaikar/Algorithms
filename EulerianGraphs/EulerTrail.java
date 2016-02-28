@@ -3,7 +3,6 @@ import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Stack;
 
 public class EulerTrail {
 
@@ -14,7 +13,7 @@ public class EulerTrail {
 	 * @return
 	 */
 
-	public static List<EulerEdge> findEulerTourComponents(Graph graph) {
+	public static List<EulerEdge> findEulerTourComponents(Graph<EulerVertex,EulerEdge> graph) {
 
 		List<EulerEdge> finalEulerTour = new LinkedList<EulerEdge>();
 		/**
@@ -50,7 +49,8 @@ public class EulerTrail {
 						current.setComponentId(componentId);
 					}
 					EulerEdge edge = null;
-					for (EulerEdge eulerEdge : current.getAdj()) {
+					for (Object edge1 : current.getAdj()) {
+						EulerEdge eulerEdge=(EulerEdge) edge1;
 						if (!eulerEdge.isDisabled()) {
 							edge = eulerEdge;
 							break;
@@ -107,15 +107,15 @@ public class EulerTrail {
 	public static void main(String[] args) {
 
 		EulerTrail trail = new EulerTrail();
-		Graph graph = trail.acceptGraphInput(args.length > 0 ? args[0] : null);
+		Graph<EulerVertex,EulerEdge> graph = trail.acceptGraphInput(args.length > 0 ? args[0] : null);
 		Statistics stats = new Statistics();
 		stats.timer();
 		EulerTrail.findEulerTourComponents(graph);
 		stats.timer("Eulerian Test Function");
 	}
 
-	public Graph acceptGraphInput(String inputFilePath) {
-		Graph graph = null;
+	public Graph<EulerVertex,EulerEdge> acceptGraphInput(String inputFilePath) {
+		Graph<EulerVertex,EulerEdge> graph = null;
 		try {
 			Scanner sc = null;
 			File inputFile = inputFilePath != null ? new File(inputFilePath) : null;

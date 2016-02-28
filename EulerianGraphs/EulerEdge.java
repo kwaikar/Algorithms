@@ -21,7 +21,11 @@ public class EulerEdge extends  Edge{
 		from = u;
 		to = v;
 	}
-
+	public static <E extends Edge> EulerEdge getInstance(EulerVertex u, EulerVertex v, int w)
+	{
+ 		return new EulerEdge(u,v,w);
+	}
+	
 	
 	
 	/**

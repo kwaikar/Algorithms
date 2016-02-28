@@ -53,3 +53,4 @@ local.properties
 /VertexBase.class
 /EulerEdge.class
 /EulerTrail.class
+/VertexIterator.class

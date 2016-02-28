@@ -43,7 +43,7 @@ public class EulerianGraphs {
 	 * @return graph object
 	 */ 
 	public Graph acceptGraphInput(String inputFilePath) {
-		Graph graph = null;
+		Graph<EulerVertex,EulerEdge> graph = null;
 		try {
 			Scanner sc = null;
 			File inputFile = inputFilePath != null ? new File(inputFilePath) : null;
@@ -68,7 +68,7 @@ public class EulerianGraphs {
 	 * @param graph - Graph to be tested for presence of Eulerian Path
 	 * @return boolean Flag - Whether Graph has Eulerian Path or not.
 	 */
-	public  boolean testEulerian(Graph graph) {
+	public  boolean testEulerian(Graph<Vertex,Edge> graph) {
 		/**
 		 * Invariants: connected : flag for checking whether graph is
 		 * connected or not. Default value is set as true.
@@ -90,7 +90,7 @@ public class EulerianGraphs {
 			if(!currentVertex.isSeen())
 			{
 				currentVertex.setSeen(true);
-				for (Edge edge : currentVertex.getAdj()) {
+				for (Edge edge :  currentVertex.getAdj()) {
 					if (!edge.getTo().isSeen()) {
 						queue.add(edge.getTo());
 					}

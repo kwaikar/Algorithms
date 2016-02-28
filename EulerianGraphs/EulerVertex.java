@@ -23,7 +23,11 @@ public class EulerVertex  extends Vertex{
 	}
 
 
-
+	public static <V extends Vertex> EulerVertex getInstance( int n)
+	{
+ 		return new EulerVertex(n);
+	}
+	
 	/**
 	 * @return the componentId
 	 */
@@ -46,7 +50,7 @@ public class EulerVertex  extends Vertex{
 	/**
 	 * @return the adj
 	 */
-	public List<EulerEdge> getAdj() {
+	public List  getAdj() {
 		return Adj;
 	}
  
@@ -63,7 +67,7 @@ public class EulerVertex  extends Vertex{
 	/**
 	 * @return the revAdj
 	 */
-	public List<EulerEdge> getRevAdj() {
+	public List  getRevAdj() {
 		return revAdj;
 	}
 
