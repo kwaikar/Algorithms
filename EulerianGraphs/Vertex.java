@@ -14,18 +14,16 @@ public class Vertex {
 							// visited
 	protected Vertex parent; // parent of the vertex
 	protected int distance; // distance to the vertex from the source vertex
-	private List<Edge> Adj, revAdj; // adjacency list; use LinkedList or
+	private List  Adj, revAdj; // adjacency list; use LinkedList or
 									// ArrayList
 
-	public Vertex() {
-	}
-
-	public static <V extends Vertex> Vertex getInstance(int n) {
-		return new Vertex(n);
-	}
-
-	public Vertex(int n) {
-
+	/**
+	 * Constructor for the vertex
+	 * 
+	 * @param n
+	 *            : int - name of the vertex
+	 */
+	Vertex(int n) {
 		name = n;
 		seen = false;
 		parent = null;
@@ -33,6 +31,8 @@ public class Vertex {
 		revAdj = new ArrayList<Edge>(); /* only for directed graphs */
 	}
 
+	
+	
 	/**
 	 * @return the name
 	 */
@@ -40,13 +40,16 @@ public class Vertex {
 		return name;
 	}
 
+
+
 	/**
-	 * @param name
-	 *            the name to set
+	 * @param name the name to set
 	 */
 	public void setName(int name) {
 		this.name = name;
 	}
+
+
 
 	/**
 	 * @return the seen
@@ -55,13 +58,16 @@ public class Vertex {
 		return seen;
 	}
 
+
+
 	/**
-	 * @param seen
-	 *            the seen to set
+	 * @param seen the seen to set
 	 */
 	public void setSeen(boolean seen) {
 		this.seen = seen;
 	}
+
+
 
 	/**
 	 * @return the parent
@@ -70,13 +76,16 @@ public class Vertex {
 		return parent;
 	}
 
+
+
 	/**
-	 * @param parent
-	 *            the parent to set
+	 * @param parent the parent to set
 	 */
 	public void setParent(Vertex parent) {
 		this.parent = parent;
 	}
+
+
 
 	/**
 	 * @return the distance
@@ -85,43 +94,52 @@ public class Vertex {
 		return distance;
 	}
 
+
+
 	/**
-	 * @param distance
-	 *            the distance to set
+	 * @param distance the distance to set
 	 */
 	public void setDistance(int distance) {
 		this.distance = distance;
 	}
 
+
+
 	/**
 	 * @return the adj
 	 */
-	public List<Edge> getAdj() {
+	public List<?extends Edge>  getAdj() {
 		return Adj;
 	}
 
+
+
 	/**
-	 * @param adj
-	 *            the adj to set
+	 * @param adj the adj to set
 	 */
-	public void setAdj(List<Edge> adj) {
+	public void setAdj(List  adj) {
 		Adj = adj;
 	}
+
+
 
 	/**
 	 * @return the revAdj
 	 */
-	public List<Edge> getRevAdj() {
+	public List<?extends Edge>  getRevAdj() {
 		return revAdj;
 	}
 
+
+
 	/**
-	 * @param revAdj
-	 *            the revAdj to set
+	 * @param revAdj the revAdj to set
 	 */
-	public void setRevAdj(List<Edge> revAdj) {
+	public void setRevAdj(List  revAdj) {
 		this.revAdj = revAdj;
 	}
+
+
 
 	/**
 	 * Method to represent a vertex by its name
@@ -129,5 +147,7 @@ public class Vertex {
 	public String toString() {
 		return Integer.toString(name);
 	}
-
+	
+	
+	
 }

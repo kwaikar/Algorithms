@@ -65,12 +65,12 @@ public class MSTUsingPriorityQueue {
 			if (!(e.getTo().isSeen() && e.getFrom().isSeen())) {
 
 				/**
-				 * Queue will never have edges that have never been visied.
+				 * Queue will never have edges that have never been visited.
 				 */
 				if(e.getFrom().isSeen())
 					{
-					u=e.getFrom();
-					v=e.getTo() ;
+						u=e.getFrom();
+						v=e.getTo() ;
 					}
 				else
 				{

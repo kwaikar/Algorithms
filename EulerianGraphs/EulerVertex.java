@@ -1,20 +1,24 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Class to represent a EulerVertex of a graph
  */
 
-public class EulerVertex  extends Vertex{
+public class EulerVertex extends Vertex {
 
 	private EulerVertex parent; // parent of the vertex
-	private int componentId=0;
-	protected List<EulerEdge> Adj, revAdj; 
+	private Set<Integer> componentIds = new HashSet<Integer>();
+	protected List<EulerEdge> Adj, revAdj;
+
 	EulerVertex(int n) {
 		super(n);
 		Adj = new ArrayList<EulerEdge>();
 		revAdj = new ArrayList<EulerEdge>();
-	} 
+	}
+
 	/**
 	 * @return the parent
 	 */
@@ -22,26 +26,32 @@ public class EulerVertex  extends Vertex{
 		return parent;
 	}
 
+	/**
+	 * @return the componentIds
+	 */
+	public Set<Integer> getComponentIds() {
+		return componentIds;
+	}
 
-	public static <V extends Vertex> EulerVertex getInstance( int n)
-	{
- 		return new EulerVertex(n);
-	}
-	
 	/**
-	 * @return the componentId
+	 * @param componentIds
+	 *            the componentIds to set
 	 */
-	public int getComponentId() {
-		return componentId;
+	public void setComponentIds(Set<Integer> componentIds) {
+		this.componentIds = componentIds;
 	}
+
 	/**
-	 * @param componentId the componentId to set
+	 * @param componentId
+	 *            the componentId to set
 	 */
-	public void setComponentId(int componentId) {
-		this.componentId = componentId;
+	public void addComponentId(int componentId) {
+		this.componentIds.add(componentId);
 	}
+
 	/**
-	 * @param parent the parent to set
+	 * @param parent
+	 *            the parent to set
 	 */
 	public void setParent(EulerVertex parent) {
 		this.parent = parent;
@@ -50,38 +60,46 @@ public class EulerVertex  extends Vertex{
 	/**
 	 * @return the adj
 	 */
-	public List  getAdj() {
+	public List<EulerEdge> getAdj() {
 		return Adj;
 	}
- 
 
-	/**
-	 * @param adj the adj to set
-	 */
-	public void setAdj(List  adj) {
-		Adj = adj;
+	public boolean hasEnabledEdges() {
+		for (EulerEdge eulerEdge : Adj) {
+			if (!eulerEdge.isDisabled()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
-
+	/**
+	 * @param adj
+	 *            the adj to set
+	 */
+	public void setAdj(List adj) {
+		Adj = adj;
+	}
 
 	/**
 	 * @return the revAdj
 	 */
-	public List  getRevAdj() {
+	public List<EulerEdge> getRevAdj() {
 		return revAdj;
 	}
 
 
-
 	/**
-	 * @param revAdj the revAdj to set
+	 * @param revAdj
+	 *            the revAdj to set
 	 */
 	public void setRevAdj(List revAdj) {
 		this.revAdj = revAdj;
 	}
-@Override
-public String toString() {
-	// TODO Auto-generated method stub
-	return this.name+"["+this.componentId+"]";
-}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return this.name+"";
+	}
 }

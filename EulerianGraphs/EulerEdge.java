@@ -6,6 +6,7 @@ public class EulerEdge extends  Edge{
 	private EulerVertex from; // head vertex
 	private EulerVertex to; // tail vertex
 	private boolean disabled;
+	private int index=0;
 	/**
 	 * Constructor for Edge
 	 * 
@@ -21,11 +22,7 @@ public class EulerEdge extends  Edge{
 		from = u;
 		to = v;
 	}
-	public static <E extends Edge> EulerEdge getInstance(EulerVertex u, EulerVertex v, int w)
-	{
- 		return new EulerEdge(u,v,w);
-	}
-	
+
 	
 	
 	/**
@@ -49,6 +46,42 @@ public class EulerEdge extends  Edge{
 
 
 	/**
+	 * @return the index
+	 */
+	public int getIndex() {
+		return index;
+	}
+
+
+
+	/**
+	 * @param index the index to set
+	 */
+	public void setIndex(int index) {
+		this.index = index;
+	}
+
+
+
+	/**
+	 * @param from the from to set
+	 */
+	public void setFrom(EulerVertex from) {
+		this.from = from;
+	}
+
+
+
+	/**
+	 * @param to the to to set
+	 */
+	public void setTo(EulerVertex to) {
+		this.to = to;
+	}
+
+
+
+	/**
 	 * @return the disabled
 	 */
 	public boolean isDisabled() {
@@ -65,14 +98,7 @@ public class EulerEdge extends  Edge{
 	}
 
 
-	public EulerEdge reverse()
-	{
-		EulerVertex temp = from;
-		from=to;
-		to=temp;
-		temp=null;
-		return this;
-	}
+
 	/**
 	 * Method to find the other end end of the arc given a vertex reference
 	 * 
@@ -95,6 +121,6 @@ public class EulerEdge extends  Edge{
 	 * arc and y is the tail of the arc
 	 */
 	public String toString() {
-		return "(" + from + "->" + to + ")";
+		return  this.from + "->" + this.to  ;
 	}
 }
