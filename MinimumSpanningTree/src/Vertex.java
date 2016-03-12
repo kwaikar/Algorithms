@@ -20,6 +20,7 @@ public class Vertex implements Comparable<Vertex>, Index{
 	private int count;
 	private int componentId;
 	private int index;
+	private int rank;
 	
 	
 
@@ -176,6 +177,20 @@ public class Vertex implements Comparable<Vertex>, Index{
 	}
 
 
+
+	/**
+	 * @return the rank
+	 */
+	public int getRank() {
+		return rank;
+	}
+
+	/**
+	 * @param rank the rank to set
+	 */
+	public void setRank(int rank) {
+		this.rank = rank;
+	}
 
 	/**
 	 * @param distance the distance to set
