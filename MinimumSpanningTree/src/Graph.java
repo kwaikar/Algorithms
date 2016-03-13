@@ -246,7 +246,10 @@ class Graph implements Iterable<Vertex> {
 
 		// create a graph instance
 		Graph g = new Graph(n);
-
+		if(graphType.equals(GraphType.UNDIRECTED_EDGE_SORTED))
+		{
+			g.initializeEdgeSortedQueue();
+		}
 		for (int i = 0; i < m; i++) {
 			int u = in.nextInt();
 			int v = in.nextInt();
@@ -260,11 +263,10 @@ class Graph implements Iterable<Vertex> {
 				g.addEdge(u, v, w);
 				break;
 			case UNDIRECTED_EDGE_SORTED:
-				g.initializeEdgeSortedQueue();
 				g.addEdgeOnGraph(u, v, w);
 				break;
 			case DIRECTED_EDGE_SORTED:
-				g.addEdgeOnGraph(u, v, w);
+				g.addSortedEdge(u, v, w);
 				break;
 
 			}
