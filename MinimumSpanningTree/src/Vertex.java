@@ -8,8 +8,10 @@
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
-public class Vertex implements Comparable<Vertex>, Index{
+public class Vertex implements Comparable<Vertex>, Index {
 	private int name; // name of the vertex
 	private boolean seen; // flag to check if the vertex has already been
 							// visited
@@ -17,15 +19,15 @@ public class Vertex implements Comparable<Vertex>, Index{
 	private int distance; // distance to the vertex from the source vertex
 	private List<Edge> Adj, revAdj; // adjacency list; use LinkedList or
 									// ArrayList
+	private Queue<Edge> sortedEdges;
 	private int count;
 	private int componentId;
 	private int index;
 	private int rank;
-	
-	
 
 	/**
 	 * Kanchan : Added for implementing Indexed binary heap.
+	 * 
 	 * @return the index
 	 */
 	public int getIndex() {
@@ -33,7 +35,8 @@ public class Vertex implements Comparable<Vertex>, Index{
 	}
 
 	/**
-	 * @param index the index to set
+	 * @param index
+	 *            the index to set
 	 */
 	public void putIndex(int index) {
 		this.index = index;
@@ -51,13 +54,19 @@ public class Vertex implements Comparable<Vertex>, Index{
 		parent = null;
 		Adj = new ArrayList<Edge>();
 		revAdj = new ArrayList<Edge>(); /* only for directed graphs */
+		sortedEdges = new PriorityQueue<Edge>(new Comparator<Edge>() {
+			@Override
+			public int compare(Edge o1, Edge o2) {
+				return o1.getWeight() - o2.getWeight();
+			}
+		}); /* Only for Directed Edges which need sorting on weight.*/
 	}
 
 	/**
-	 * This method transposes both, adjecency list as well as reverseadjecency list
+	 * This method transposes both, adjecency list as well as reverseadjecency
+	 * list
 	 */
-	public void transposeAdjecencyList()
-	{
+	public void transposeAdjecencyList() {
 		for (Edge edge : this.getAdj()) {
 			Vertex temp = edge.getTo();
 			edge.setTo(edge.getFrom());
@@ -69,7 +78,21 @@ public class Vertex implements Comparable<Vertex>, Index{
 			edge.setFrom(temp);
 		}
 	}
-	
+
+	/**
+	 * @return the sortedEdges
+	 */
+	public Queue<Edge> getSortedEdges() {
+		return sortedEdges;
+	}
+
+	/**
+	 * @param sortedEdges the sortedEdges to set
+	 */
+	public void setSortedEdges(Queue<Edge> sortedEdges) {
+		this.sortedEdges = sortedEdges;
+	}
+
 	/**
 	 * @return the componentId
 	 */
@@ -77,16 +100,13 @@ public class Vertex implements Comparable<Vertex>, Index{
 		return componentId;
 	}
 
-
-
 	/**
-	 * @param componentId the componentId to set
+	 * @param componentId
+	 *            the componentId to set
 	 */
 	public void setComponentId(int componentId) {
 		this.componentId = componentId;
 	}
-
-
 
 	/**
 	 * @return the count
@@ -95,25 +115,21 @@ public class Vertex implements Comparable<Vertex>, Index{
 		return count;
 	}
 
-
-
 	/**
-	 * @param count the count to set
+	 * @param count
+	 *            the count to set
 	 */
 	public void setCount(int count) {
 		this.count = count;
 	}
 
-
-
 	/**
-	 * @param seen the seen to set
+	 * @param seen
+	 *            the seen to set
 	 */
 	public void setSeen(boolean seen) {
 		this.seen = seen;
 	}
-
-
 
 	/**
 	 * @return the name
@@ -122,16 +138,13 @@ public class Vertex implements Comparable<Vertex>, Index{
 		return name;
 	}
 
-
-
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(int name) {
 		this.name = name;
 	}
-
-
 
 	/**
 	 * @return the seen
@@ -140,16 +153,13 @@ public class Vertex implements Comparable<Vertex>, Index{
 		return seen;
 	}
 
-
-
 	/**
-	 * @param seen the seen to set
+	 * @param seen
+	 *            the seen to set
 	 */
 	public void setSeen() {
 		this.seen = true;
 	}
-
-
 
 	/**
 	 * @return the parent
@@ -158,16 +168,13 @@ public class Vertex implements Comparable<Vertex>, Index{
 		return parent;
 	}
 
-
-
 	/**
-	 * @param parent the parent to set
+	 * @param parent
+	 *            the parent to set
 	 */
 	public void setParent(Vertex parent) {
 		this.parent = parent;
 	}
-
-
 
 	/**
 	 * @return the distance
@@ -175,8 +182,6 @@ public class Vertex implements Comparable<Vertex>, Index{
 	public int getDistance() {
 		return distance;
 	}
-
-
 
 	/**
 	 * @return the rank
@@ -186,20 +191,20 @@ public class Vertex implements Comparable<Vertex>, Index{
 	}
 
 	/**
-	 * @param rank the rank to set
+	 * @param rank
+	 *            the rank to set
 	 */
 	public void setRank(int rank) {
 		this.rank = rank;
 	}
 
 	/**
-	 * @param distance the distance to set
+	 * @param distance
+	 *            the distance to set
 	 */
 	public void setDistance(int distance) {
 		this.distance = distance;
 	}
-
-
 
 	/**
 	 * @return the adj
@@ -208,16 +213,13 @@ public class Vertex implements Comparable<Vertex>, Index{
 		return Adj;
 	}
 
-
-
 	/**
-	 * @param adj the adj to set
+	 * @param adj
+	 *            the adj to set
 	 */
 	public void setAdj(List<Edge> adj) {
 		Adj = adj;
 	}
-
-
 
 	/**
 	 * @return the revAdj
@@ -226,30 +228,24 @@ public class Vertex implements Comparable<Vertex>, Index{
 		return revAdj;
 	}
 
-
-
 	/**
-	 * @param revAdj the revAdj to set
+	 * @param revAdj
+	 *            the revAdj to set
 	 */
 	public void setRevAdj(List<Edge> revAdj) {
 		this.revAdj = revAdj;
 	}
 
-
-
 	/**
 	 * Method to represent a vertex by its name
 	 */
 	public String toString() {
-		return Integer.toString(name)+":"+ distance ;
+		return Integer.toString(name) + ":" + distance;
 	}
-
 
 	@Override
 	public int compareTo(Vertex o) {
-		return this.getDistance()-o.getDistance();
+		return this.getDistance() - o.getDistance();
 	}
-	
-	
-	
+
 }

@@ -68,8 +68,7 @@ class Graph implements Iterable<Vertex> {
 		v.getAdj().add(e);
 	}
 
-	void initializeEdgeSortedQueue()
-	{
+	void initializeEdgeSortedQueue() {
 
 		edgeQueueSortedAscByWeight = new PriorityQueue<Edge>(new Comparator<Edge>() {
 			@Override
@@ -78,6 +77,7 @@ class Graph implements Iterable<Vertex> {
 			}
 		});
 	}
+
 	/**
 	 * Method to add an edge to the graph
 	 * 
@@ -94,6 +94,13 @@ class Graph implements Iterable<Vertex> {
 		Edge e = new Edge(u, v, weight);
 		edgeQueueSortedAscByWeight.add(e);
 	}
+	
+	void addSortedEdge(int a, int b, int weight) {
+		Vertex head = verts.get(a);
+		Vertex tail = verts.get(b);
+		Edge e = new Edge(head, tail, weight);
+		head.getSortedEdges().add(e);
+	}
 
 	/**
 	 * @return the edgeQueueSortedAscByWeight
@@ -103,7 +110,8 @@ class Graph implements Iterable<Vertex> {
 	}
 
 	/**
-	 * @param edgeQueueSortedAscByWeight the edgeQueueSortedAscByWeight to set
+	 * @param edgeQueueSortedAscByWeight
+	 *            the edgeQueueSortedAscByWeight to set
 	 */
 	public void setEdgeQueueSortedAscByWeight(Queue<Edge> edgeQueueSortedAscByWeight) {
 		this.edgeQueueSortedAscByWeight = edgeQueueSortedAscByWeight;
@@ -238,12 +246,12 @@ class Graph implements Iterable<Vertex> {
 
 		// create a graph instance
 		Graph g = new Graph(n);
-		
+
 		for (int i = 0; i < m; i++) {
 			int u = in.nextInt();
 			int v = in.nextInt();
 			int w = in.nextInt();
-			
+
 			switch (graphType) {
 			case DIRECTED:
 				g.addDirectedEdge(u, v, w);
@@ -255,6 +263,10 @@ class Graph implements Iterable<Vertex> {
 				g.initializeEdgeSortedQueue();
 				g.addEdgeOnGraph(u, v, w);
 				break;
+			case DIRECTED_EDGE_SORTED:
+				g.addEdgeOnGraph(u, v, w);
+				break;
+
 			}
 		}
 		in.close();
