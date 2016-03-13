@@ -6,7 +6,7 @@ public class Edge {
 	private Vertex from; // head vertex
 	private Vertex to; // tail vertex
 	private int weight;// weight of the arc
-
+	private int originalWeight;// weight of the arc
 	/**
 	 * Constructor for Edge
 	 * 
@@ -21,18 +21,22 @@ public class Edge {
 		from = u;
 		to = v;
 		weight = w;
+		originalWeight=weight;
 	}
 
-	
-	
+
+	public static Edge reverseEdge(Edge edge)
+	{
+		Edge revEdge = new Edge(edge.getTo(),edge.getFrom(),edge.weight);
+		revEdge.originalWeight=edge.originalWeight;
+		return revEdge;
+	}
 	/**
 	 * @return the from
 	 */
 	public Vertex getFrom() {
 		return from;
 	}
-
-
 
 	/**
 	 * @return the to
@@ -41,8 +45,6 @@ public class Edge {
 		return to;
 	}
 
-
-
 	/**
 	 * @return the weight
 	 */
@@ -50,7 +52,13 @@ public class Edge {
 		return weight;
 	}
 
-
+	/**
+	 * This method reduces weight of the edge by the quantity specified.
+	 * @param reductionQuantity
+	 */
+	public void reduceWeight(int reductionQuantity) {
+		this.weight = this.weight - reductionQuantity;
+	}
 
 	/**
 	 * Method to find the other end end of the arc given a vertex reference
@@ -70,28 +78,26 @@ public class Edge {
 	}
 
 	/**
-	 * @param from the from to set
+	 * @param from
+	 *            the from to set
 	 */
 	public void setFrom(Vertex from) {
 		this.from = from;
 	}
 
-
-
 	/**
-	 * @param to the to to set
+	 * @param to
+	 *            the to to set
 	 */
 	public void setTo(Vertex to) {
 		this.to = to;
 	}
-
-
 
 	/**
 	 * Method to represent the edge in the form (x,y) where x is the head of the
 	 * arc and y is the tail of the arc
 	 */
 	public String toString() {
-		return "(" + from + "," + to +":"+weight+ ")";
+		return "(" + from + "," + to + "):"+weight;
 	}
 }

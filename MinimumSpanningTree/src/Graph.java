@@ -43,7 +43,7 @@ class Graph implements Iterable<Vertex> {
 	 */
 	Graph(int size) {
 		numNodes = size;
-		verts = new ArrayList<>(size + 1);
+		verts = new ArrayList<>( );
 		verts.add(0, null);
 		// create an array of Vertex objects
 		for (int i = 1; i <= size; i++)
@@ -70,7 +70,15 @@ class Graph implements Iterable<Vertex> {
 
 	void initializeEdgeSortedQueue() {
 
-		edgeQueueSortedAscByWeight = new PriorityQueue<Edge>(new Comparator<Edge>() {
+		edgeQueueSortedAscByWeight = getNewEdgeSortedPriorityQueue();
+	}
+
+	/**
+	 * This function returns a new empty priority Queue that sorts edges on weight.
+	 * @return
+	 */
+	public static PriorityQueue<Edge> getNewEdgeSortedPriorityQueue() {
+		return new PriorityQueue<Edge>(new Comparator<Edge>() {
 			@Override
 			public int compare(Edge o1, Edge o2) {
 				return o1.getWeight() - o2.getWeight();
@@ -94,12 +102,26 @@ class Graph implements Iterable<Vertex> {
 		Edge e = new Edge(u, v, weight);
 		edgeQueueSortedAscByWeight.add(e);
 	}
-	
-	void addSortedEdge(int a, int b, int weight) {
+
+	/**
+	 * This method adds a directed edge and a sorted reverse edge by weight.
+	 * 
+	 * @param a
+	 *            : int - one end of edge
+	 * @param b
+	 *            : int - other end of edge
+	 * @param weight
+	 *            : int - the weight of the edge
+	 */
+	void addDirectedEdgeAndReverseSortedEdge(int a, int b, int weight) {
 		Vertex head = verts.get(a);
 		Vertex tail = verts.get(b);
 		Edge e = new Edge(head, tail, weight);
 		head.getSortedEdges().add(e);
+		/**
+		 * Sorted reverse edge can be used for finding the minimum incoming edge into the node.
+		 */
+		tail.getSortedRevEdges().add(e);
 	}
 
 	/**
@@ -246,8 +268,7 @@ class Graph implements Iterable<Vertex> {
 
 		// create a graph instance
 		Graph g = new Graph(n);
-		if(graphType.equals(GraphType.UNDIRECTED_EDGE_SORTED))
-		{
+		if (graphType.equals(GraphType.UNDIRECTED_EDGE_SORTED)) {
 			g.initializeEdgeSortedQueue();
 		}
 		for (int i = 0; i < m; i++) {
@@ -266,7 +287,7 @@ class Graph implements Iterable<Vertex> {
 				g.addEdgeOnGraph(u, v, w);
 				break;
 			case DIRECTED_EDGE_SORTED:
-				g.addSortedEdge(u, v, w);
+				g.addDirectedEdgeAndReverseSortedEdge(u, v, w);
 				break;
 
 			}

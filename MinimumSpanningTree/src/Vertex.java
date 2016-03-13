@@ -7,6 +7,7 @@
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -19,11 +20,61 @@ public class Vertex implements Comparable<Vertex>, Index {
 	private int distance; // distance to the vertex from the source vertex
 	private List<Edge> Adj, revAdj; // adjacency list; use LinkedList or
 									// ArrayList
-	private Queue<Edge> sortedEdges;
+	private PriorityQueue<Edge> sortedEdges, sortedRevEdges;
 	private int count;
 	private int componentId;
 	private int index;
 	private int rank;
+	private PseudoVertex pseudoVertex;
+	private boolean incomingSeen;
+	private boolean outgoingSeen;
+	private boolean partOfCycle;
+	private boolean enabled = true;
+
+	/**
+	 * @return the incomingVisit
+	 */
+	public boolean isIncomingSeen() {
+		return incomingSeen;
+	}
+
+	/**
+	 * @param incomingVisit
+	 *            the incomingVisit to set
+	 */
+	public void setIncomingSeen(boolean incomingVisit) {
+		this.incomingSeen = incomingVisit;
+	}
+
+	/**
+	 * @return the outgoingVisit
+	 */
+	public boolean isOutgoingSeen() {
+		return outgoingSeen;
+	}
+
+	/**
+	 * @param outgoingVisit
+	 *            the outgoingVisit to set
+	 */
+	public void setOutgoingSeen(boolean outgoingSeen) {
+		this.outgoingSeen = outgoingSeen;
+	}
+
+	/**
+	 * @return the partOfCycle
+	 */
+	public boolean isPartOfCycle() {
+		return partOfCycle;
+	}
+
+	/**
+	 * @param partOfCycle
+	 *            the partOfCycle to set
+	 */
+	public void setPartOfCycle(boolean partOfCycle) {
+		this.partOfCycle = partOfCycle;
+	}
 
 	/**
 	 * Kanchan : Added for implementing Indexed binary heap.
@@ -40,6 +91,38 @@ public class Vertex implements Comparable<Vertex>, Index {
 	 */
 	public void putIndex(int index) {
 		this.index = index;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + name;
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Vertex other = (Vertex) obj;
+		if (name != other.name)
+			return false;
+		return true;
 	}
 
 	/**
@@ -59,7 +142,53 @@ public class Vertex implements Comparable<Vertex>, Index {
 			public int compare(Edge o1, Edge o2) {
 				return o1.getWeight() - o2.getWeight();
 			}
-		}); /* Only for Directed Edges which need sorting on weight.*/
+		});
+
+		sortedRevEdges = new PriorityQueue<Edge>(new Comparator<Edge>() {
+			@Override
+			public int compare(Edge o1, Edge o2) {
+				return o1.getWeight() - o2.getWeight();
+			}
+		}); /* Only for Directed Edges which need sorting on weight. */
+	}
+
+	Vertex(int n, List<Edge> cycle) {
+		if (cycle!=null && cycle.size()!=0) {
+			/**
+			 * Custom constructor for Pseudo Vertices.
+			 */
+			pseudoVertex = new PseudoVertex(cycle);
+			name = n;
+			seen = false;
+			parent = null;
+			Adj = new ArrayList<Edge>();
+			revAdj = new ArrayList<Edge>(); /* only for directed graphs */
+			sortedRevEdges = Graph.getNewEdgeSortedPriorityQueue(); /* Only for Directed Edges which need sorting on weight. */
+			sortedEdges =Graph.getNewEdgeSortedPriorityQueue(); /* Only for Directed Edges which need sorting on weight. */
+		}
+	}
+ 
+	/**
+	 * @return the sortedEdges
+	 */
+	public PriorityQueue<Edge> getSortedEdges() {
+		return sortedEdges;
+	}
+ 
+
+	/**
+	 * @return the pseudoVertex
+	 */
+	public PseudoVertex getPseudoVertex() {
+		return pseudoVertex;
+	}
+
+	/**
+	 * @param pseudoVertex
+	 *            the pseudoVertex to set
+	 */
+	public void setPseudoVertex(PseudoVertex pseudoVertex) {
+		this.pseudoVertex = pseudoVertex;
 	}
 
 	/**
@@ -82,15 +211,16 @@ public class Vertex implements Comparable<Vertex>, Index {
 	/**
 	 * @return the sortedEdges
 	 */
-	public Queue<Edge> getSortedEdges() {
-		return sortedEdges;
+	public Queue<Edge> getSortedRevEdges() {
+		return sortedRevEdges;
 	}
 
 	/**
-	 * @param sortedEdges the sortedEdges to set
+	 * @param sortedEdges
+	 *            the sortedEdges to set
 	 */
-	public void setSortedEdges(Queue<Edge> sortedEdges) {
-		this.sortedEdges = sortedEdges;
+	public void setSortedRevEdges(PriorityQueue<Edge> sortedRevEdges) {
+		this.sortedRevEdges = sortedRevEdges;
 	}
 
 	/**
@@ -151,6 +281,15 @@ public class Vertex implements Comparable<Vertex>, Index {
 	 */
 	public boolean isSeen() {
 		return seen;
+	}
+
+	/**
+	 * @return the seen
+	 */
+	public boolean fetchAndResetSeen() {
+		boolean flag = seen;
+		this.seen = false;
+		return flag;
 	}
 
 	/**
@@ -243,9 +382,71 @@ public class Vertex implements Comparable<Vertex>, Index {
 		return Integer.toString(name) + ":" + distance;
 	}
 
+	/**
+	 * @return the enabled
+	 */
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	/**
+	 * @param enabled
+	 *            the enabled to set
+	 */
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
 	@Override
 	public int compareTo(Vertex o) {
 		return this.getDistance() - o.getDistance();
 	}
 
+	public class PseudoVertex {
+		List<Edge> cycle = null;
+		Edge originalIncoming = null;
+		List<Edge> originalOutgoing= new LinkedList<Edge>();
+
+		public PseudoVertex(List<Edge>cycle){
+			super();
+			this.cycle=cycle;
+		}
+
+		/**
+		 * @return the originalIncoming
+		 */
+		public Edge getOriginalIncoming() {
+			return originalIncoming;
+		}
+
+		/**
+		 * @param originalIncoming
+		 *            the originalIncoming to set
+		 */
+		public void setOriginalIncoming(Edge originalIncoming) {
+			this.originalIncoming = originalIncoming;
+		}
+
+		/**
+		 * @return the originalOutgoing
+		 */
+		public List<Edge> getOriginalOutgoing() {
+			return originalOutgoing;
+		}
+
+		/**
+		 * @param originalOutgoing the originalOutgoing to set
+		 */
+		public void addOriginalOutgoing( Edge originalOutgoing) {
+			this.originalOutgoing .add(originalOutgoing);
+		}
+
+		/**
+		 * @return the cycle
+		 */
+		public List<Edge> getCycle() {
+			return cycle;
+		}
+
+	}
 }
