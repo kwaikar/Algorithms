@@ -119,7 +119,7 @@ public class EdmondsAlgorithm {
 				}
 			}
 		}
-		System.out.println("Unreachable node found : " + unreachableNodeZ);
+	//	System.out.println("Unreachable node found : " + unreachableNodeZ);
 		if (unreachableNodeZ == null) {
 			for (Vertex vertex : directedGraph) {
 				if (vertex.isSeen()) {
@@ -140,7 +140,7 @@ public class EdmondsAlgorithm {
 					unreachableNodeZ);
 			Vertex repeatingVertex = output.getFirst();
 			Stack<Edge> backwardsWalkStack = output.getSecond();
-			System.out.println("repeatingVertex: " + repeatingVertex + ": " + backwardsWalkStack);
+		//	System.out.println("repeatingVertex: " + repeatingVertex + ": " + backwardsWalkStack);
 			/**
 			 * u now points to the x Vertex that got repeated on the walk! We
 			 * need to now back
@@ -149,7 +149,9 @@ public class EdmondsAlgorithm {
 			Vertex previousTo = repeatingVertex;
 			Edge revEdge = backwardsWalkStack.pop();
 			do {
+			//	System.out.println(revEdge);
 				while (revEdge.getFrom() != previousTo) {
+					
 					revEdge = backwardsWalkStack.pop();
 				}
 				/**
@@ -161,8 +163,8 @@ public class EdmondsAlgorithm {
 				revEdge.getFrom().setPartOfCycle(true);
 				previousTo = revEdge.getTo();
 
-			} while (/* !backwardsWalkStack.isEmpty() || */ !previousTo.equals(repeatingVertex));
-			System.out.println("cycle extracted: " + cycle + " : " + cycle.size());
+			} while ( !previousTo.equals(repeatingVertex));
+		//	System.out.println("cycle extracted: " + cycle + " : " + cycle.size());
 
 			/**
 			 * Now that the cycle has been found, we shrink the cycle into a
@@ -246,13 +248,11 @@ public class EdmondsAlgorithm {
 			/**
 			 * Find out and create optimal incoming edges to the cycle
 			 */
+			
 			List<Vertex> outsideVertexes = new ArrayList<>();
-			Queue<Edge> sortedIncomingEdges = Graph.getNewEdgeSortedPriorityQueue();
- 
-
 			for (Edge cycleEntry : cycle) {
 				Vertex vertex = cycleEntry.getFrom();
-				// System.out.println("finding incomng edges for : " + vertex);
+				// System.out.println("finding incoming edges for : " + vertex);
 
 				if (vertex.getSortedRevEdges() != null && vertex.getSortedRevEdges().size() != 0) {
 					for (Edge edge : vertex.getSortedRevEdges()) {
@@ -274,14 +274,16 @@ public class EdmondsAlgorithm {
 							outsideVertexes.add(outsideVertex);
 						}
 					}
-				}
+					/**
+					 * Prep for next cycle calculation
+					 */
+					for (Edge edge : vertex.getSortedRevEdges()) {
+						edge.getFrom().setIncomingSeen(false);
 
-				/*
-				 * for (Edge edge : vertex.getSortedRevEdges()) {
-				 * edge.getFrom().setIncomingSeen(false); }
-				 */
+					}
+				} 
 			}
-			// System.out.println("outsideVertexes=>"+outsideVertexes);
+			 // System.out.println("outsideVertexes=>"+outsideVertexes);
 			for (Vertex outsideVertex : outsideVertexes) {
 				Collection<Edge> queueOfEdgeRemoved = new ArrayList<>();
 				Edge minimumEdgeToCycle = null;
@@ -308,12 +310,11 @@ public class EdmondsAlgorithm {
 				if (finalMinEdge != null) {
 					// System.out.println("Minimum Edge to the cycle : " +
 					// finalMinEdge);
-				//	sortedIncomingEdges.add(finalMinEdge);
 					shrunkenVertex.getPseudoVertex().addOriginalIncoming(finalMinEdge);
 					Edge minIncomingEdgeToCycleFromOutsideVertex = new Edge(finalMinEdge.getFrom(), shrunkenVertex,
 							finalMinEdge.getWeight());
-					System.out.println("Incoming edge created : " + minIncomingEdgeToCycleFromOutsideVertex + "("
-							+ finalMinEdge + ")");
+					/*System.out.println("Incoming edge created : " + minIncomingEdgeToCycleFromOutsideVertex + "("
+							+ finalMinEdge + ")");*/
 					shrunkenVertex.getSortedRevEdges().add(minIncomingEdgeToCycleFromOutsideVertex);
 					finalMinEdge.getFrom().getSortedEdges().add(minIncomingEdgeToCycleFromOutsideVertex);
 				}
@@ -322,72 +323,35 @@ public class EdmondsAlgorithm {
 				 */
 				outsideVertex.getSortedEdges().addAll(queueOfEdgeRemoved);
 			}
-			/**
-			 * Add the minimum edge to the adjacency list.
-			 */
-			// System.out.println("=>" + sortedIncomingEdges);
-		/*	if (!sortedIncomingEdges.isEmpty()) {
-				*//**
-				 * If its empty it means that the incoming edge
-				 *//*
-				Edge minimumEdgeToCycle = sortedIncomingEdges.remove();
-				// System.out.println("::::::" + sortedIncomingEdges + " =>" +
-				// minimumEdgeToCycle);
-				shrunkenVertex.getPseudoVertex().addOriginalIncoming(minimumEdgeToCycle);
-				Edge minIncomingEdgeToCycleFromOutsideVertex = new Edge(minimumEdgeToCycle.getFrom(), shrunkenVertex,
-						minimumEdgeToCycle.getWeight());
-				System.out.println("Incoming edge created : " + minIncomingEdgeToCycleFromOutsideVertex + "("
-						+ minimumEdgeToCycle + ")");
-				shrunkenVertex.getSortedRevEdges().add(minIncomingEdgeToCycleFromOutsideVertex);
-				minimumEdgeToCycle.getFrom().getSortedEdges().add(minIncomingEdgeToCycleFromOutsideVertex);
-			}*/
+ 
 			/**
 			 * Remove all the cycles from both the nodes. Cycles have already
 			 * been associated with pseudonode.
 			 */
 			for (Edge edge : cycle)
-
 			{
-				Collection<Edge> edgesTobeReplacedInQueue = new ArrayList<>();
 				Edge edgeFromCycle = !edge.getFrom().getSortedEdges().isEmpty()
 						? edge.getFrom().getSortedEdges().remove() : null;
 				// Remove all outgoing edges
 				while (!edge.getFrom().getSortedEdges().isEmpty() && edge.getWeight() == 0) {
-					/*
-					 * if (!edgeFromCycle.getTo().isPartOfCycle()) {
-					 * edgesTobeReplacedInQueue.add(edgeFromCycle); }
-					 */
 					edgeFromCycle = edge.getFrom().getSortedEdges().remove();
 				}
-				// edge.getFrom().getSortedEdges().addAll(edgesTobeReplacedInQueue);
-				edgesTobeReplacedInQueue = new ArrayList<>();
-
 				while (!edge.getTo().getSortedRevEdges().isEmpty() && edge.getWeight() == 0) {
-					/*
-					 * if (!edgeFromCycle.getFrom().isPartOfCycle()) {
-					 * edgesTobeReplacedInQueue.add(edgeFromCycle); }
-					 */
 					edgeFromCycle = edge.getTo().getSortedRevEdges().remove();
 				}
-				// edge.getTo().getSortedRevEdges().addAll(edgesTobeReplacedInQueue);
-
 			}
 		}
-		// System.out.println();
 		/**
 		 * Recursive call until we get WMST.
 		 */
-		for (
-
-		Vertex vertex : directedGraph)
+		for (Vertex vertex : directedGraph)
 
 		{
-				System.out.println(vertex.getName() + " : " + vertex.isEnabled() + "=" + vertex.getSortedEdges() + " R{"
-						+ vertex.getSortedRevEdges() + "}");
+			/*	System.out.println(vertex.getName() + " : " + vertex.isEnabled() + "=" + vertex.getSortedEdges() + " R{"
+						+ vertex.getSortedRevEdges() + "}");*/
 		}
 		return 		minimumSpanningTree(directedGraph, new Pair<List<Edge>, Long>(edges, wMST));
 
-		// vertex.setPartOfCycle(false);
 	}
 
 	/**
@@ -402,7 +366,7 @@ public class EdmondsAlgorithm {
 		 * MST found : Expand all edges
 		 */
 		List<Edge> pathTraversed = new LinkedList<>();
-		System.out.println(edges);
+		//System.out.println(edges);
 		for (Edge edge : edges) {
 			if (!(!edge.getFrom().isEnabled() && !edge.getTo().isEnabled())) {
 				if (edge.getFrom().getPseudoVertex() != null && edge.getTo().getPseudoVertex() != null) {
@@ -479,6 +443,7 @@ public class EdmondsAlgorithm {
 				if (edge.getWeight() == 0 && edge.getFrom().isEnabled()) {
 					reachableVertices.add(edge.getFrom());
 					backwardsWalkStack.push(edge);
+					break;
 				}
 			}
 
