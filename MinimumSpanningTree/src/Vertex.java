@@ -404,7 +404,7 @@ public class Vertex implements Comparable<Vertex>, Index {
 
 	public class PseudoVertex {
 		List<Edge> cycle = null;
-		Edge originalIncoming = null;
+		List<Edge> originalIncoming = new LinkedList<>();
 		List<Edge> originalOutgoing= new LinkedList<Edge>();
 
 		public PseudoVertex(List<Edge>cycle){
@@ -415,7 +415,7 @@ public class Vertex implements Comparable<Vertex>, Index {
 		/**
 		 * @return the originalIncoming
 		 */
-		public Edge getOriginalIncoming() {
+		public List<Edge> getOriginalIncoming() {
 			return originalIncoming;
 		}
 
@@ -423,8 +423,8 @@ public class Vertex implements Comparable<Vertex>, Index {
 		 * @param originalIncoming
 		 *            the originalIncoming to set
 		 */
-		public void setOriginalIncoming(Edge originalIncoming) {
-			this.originalIncoming = originalIncoming;
+		public void addOriginalIncoming(Edge originalIncoming) {
+			this.originalIncoming.add(originalIncoming);
 		}
 
 		/**
