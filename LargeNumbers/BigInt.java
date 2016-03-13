@@ -13,7 +13,7 @@ public class BigInt {
 	private static final BigInt BIG_ZERO = new BigInt(0L);
 	private static final BigInt BIG_ONE = new BigInt(1L);
 	List<Integer> coefficients = null;
-	public static final int BASE = 10;
+	public static   int BASE = 10;
 	public boolean isPositive = true;
 
 	BigInt(List<Integer> coefficients) {
