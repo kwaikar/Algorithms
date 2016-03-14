@@ -66,7 +66,7 @@ public class IndexedHeap<T extends Comparable<? super T> & Index> extends Binary
 
 	public static void main(String[] args) {
 
-		Graph graph = Graph.acceptGraphInput(args.length > 0 ? args[0] : null, false);
+		Graph graph = Graph.acceptGraphInput(args.length > 0 ? args[0] : null, GraphType.UNDIRECTED);
 		IndexedHeap heap = new IndexedHeap(11);
 		for (Vertex vertex : graph) {
 			heap.insert(vertex);

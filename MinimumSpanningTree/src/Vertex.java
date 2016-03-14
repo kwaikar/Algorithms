@@ -177,6 +177,13 @@ public class Vertex implements Comparable<Vertex>, Index {
  
 
 	/**
+	 * @param sortedEdges the sortedEdges to set
+	 */
+	public void setSortedEdges(PriorityQueue<Edge> sortedEdges) {
+		this.sortedEdges = sortedEdges;
+	}
+
+	/**
 	 * @return the pseudoVertex
 	 */
 	public PseudoVertex getPseudoVertex() {
@@ -379,7 +386,7 @@ public class Vertex implements Comparable<Vertex>, Index {
 	 * Method to represent a vertex by its name
 	 */
 	public String toString() {
-		return Integer.toString(name) + ":" + distance;
+		return Integer.toString(name);
 	}
 
 	/**
@@ -404,18 +411,32 @@ public class Vertex implements Comparable<Vertex>, Index {
 
 	public class PseudoVertex {
 		List<Edge> cycle = null;
-		List<Edge> originalIncoming = new LinkedList<>();
+		Queue<Edge> originalIncoming = Graph.getNewEdgeSortedPriorityQueue();
 		List<Edge> originalOutgoing= new LinkedList<Edge>();
-
+		List<Edge> cycleEdges = new ArrayList<>();
 		public PseudoVertex(List<Edge>cycle){
 			super();
 			this.cycle=cycle;
 		}
 
 		/**
+		 * @return the cycleEdges
+		 */
+		public List<Edge> getCycleEdges() {
+			return cycleEdges;
+		}
+
+		/**
+		 * @param cycleEdges the cycleEdges to set
+		 */
+		public void setCycleEdges(List<Edge> cycleEdges) {
+			this.cycleEdges = cycleEdges;
+		}
+
+		/**
 		 * @return the originalIncoming
 		 */
-		public List<Edge> getOriginalIncoming() {
+		public Queue<Edge> getOriginalIncoming() {
 			return originalIncoming;
 		}
 

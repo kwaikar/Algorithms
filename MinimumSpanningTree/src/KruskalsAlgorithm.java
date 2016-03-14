@@ -69,7 +69,7 @@ public class KruskalsAlgorithm {
 		stats.timer("Read input graph");
 		stats.timer();
 		int wmst = minimumSpanningTree(graph);
-		stats.timer("Minimum Spanning Tree retrieval Statistics");
+		stats.timer("Minimum Spanning Tree retrieval");
 		System.out.println("Total Weight of the MST was found to be : "+wmst);
 	}
 
