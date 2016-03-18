@@ -8,13 +8,17 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Scanner;
 
 class Graph implements Iterable<Vertex> {
 	private List<Vertex> verts; // array of vertices
 	private int numNodes; // number of verices in the graph
+	private Queue<Edge> edgeQueueSortedAscByWeight;
 
 	/**
 	 * @return the verts
@@ -39,7 +43,7 @@ class Graph implements Iterable<Vertex> {
 	 */
 	Graph(int size) {
 		numNodes = size;
-		verts = new ArrayList<>(size + 1);
+		verts = new ArrayList<>( );
 		verts.add(0, null);
 		// create an array of Vertex objects
 		for (int i = 1; i <= size; i++)
@@ -62,6 +66,77 @@ class Graph implements Iterable<Vertex> {
 		Edge e = new Edge(u, v, weight);
 		u.getAdj().add(e);
 		v.getAdj().add(e);
+	}
+
+	void initializeEdgeSortedQueue() {
+
+		edgeQueueSortedAscByWeight = getNewEdgeSortedPriorityQueue();
+	}
+
+	/**
+	 * This function returns a new empty priority Queue that sorts edges on weight.
+	 * @return
+	 */
+	public static PriorityQueue<Edge> getNewEdgeSortedPriorityQueue() {
+		return new PriorityQueue<Edge>(new Comparator<Edge>() {
+			@Override
+			public int compare(Edge o1, Edge o2) {
+				return o1.getWeight() - o2.getWeight();
+			}
+		});
+	}
+
+	/**
+	 * Method to add an edge to the graph
+	 * 
+	 * @param a
+	 *            : int - one end of edge
+	 * @param b
+	 *            : int - other end of edge
+	 * @param weight
+	 *            : int - the weight of the edge
+	 */
+	void addEdgeOnGraph(int a, int b, int weight) {
+		Vertex u = verts.get(a);
+		Vertex v = verts.get(b);
+		Edge e = new Edge(u, v, weight);
+		edgeQueueSortedAscByWeight.add(e);
+	}
+
+	/**
+	 * This method adds a directed edge and a sorted reverse edge by weight.
+	 * 
+	 * @param a
+	 *            : int - one end of edge
+	 * @param b
+	 *            : int - other end of edge
+	 * @param weight
+	 *            : int - the weight of the edge
+	 */
+	void addDirectedEdgeAndReverseSortedEdge(int a, int b, int weight) {
+		Vertex head = verts.get(a);
+		Vertex tail = verts.get(b);
+		Edge e = new Edge(head, tail, weight);
+		head.getSortedEdges().add(e);
+		/**
+		 * Sorted reverse edge can be used for finding the minimum incoming edge into the node.
+		 */
+		tail.getSortedRevEdges().add(e);
+	}
+
+	/**
+	 * @return the edgeQueueSortedAscByWeight
+	 */
+	public Queue<Edge> getEdgeQueueSortedAscByWeight() {
+		return edgeQueueSortedAscByWeight;
+	}
+
+	/**
+	 * @param edgeQueueSortedAscByWeight
+	 *            the edgeQueueSortedAscByWeight to set
+	 */
+	public void setEdgeQueueSortedAscByWeight(Queue<Edge> edgeQueueSortedAscByWeight) {
+		this.edgeQueueSortedAscByWeight = edgeQueueSortedAscByWeight;
 	}
 
 	/**
@@ -158,7 +233,7 @@ class Graph implements Iterable<Vertex> {
 	 *            of command prompt.
 	 * @return graph object
 	 */
-	public static Graph acceptGraphInput(String inputFilePath, boolean isDirected) {
+	public static Graph acceptGraphInput(String inputFilePath, GraphType graphType) {
 		Graph graph = null;
 		try {
 			Scanner sc = null;
@@ -170,7 +245,7 @@ class Graph implements Iterable<Vertex> {
 						"Please enter dimensions of the graph (#nodes, #edges) followed by edges in format (left,right,weight)");
 				sc = new Scanner(System.in);
 			}
-			graph = Graph.readGraph(sc, isDirected);
+			graph = Graph.readGraph(sc, graphType);
 
 		} catch (FileNotFoundException e) {
 			System.out.println("Exception occured while Reading input file");
@@ -186,21 +261,35 @@ class Graph implements Iterable<Vertex> {
 	 * @param directed
 	 * @return
 	 */
-	private static Graph readGraph(Scanner in, boolean directed) {
+	private static Graph readGraph(Scanner in, GraphType graphType) {
 		// read the graph related parameters
 		int n = in.nextInt(); // number of vertices in the graph
 		int m = in.nextInt(); // number of edges in the graph
 
 		// create a graph instance
 		Graph g = new Graph(n);
+		if (graphType.equals(GraphType.UNDIRECTED_EDGE_SORTED)) {
+			g.initializeEdgeSortedQueue();
+		}
 		for (int i = 0; i < m; i++) {
 			int u = in.nextInt();
 			int v = in.nextInt();
 			int w = in.nextInt();
-			if (directed) {
+
+			switch (graphType) {
+			case DIRECTED:
 				g.addDirectedEdge(u, v, w);
-			} else {
+				break;
+			case UNDIRECTED:
 				g.addEdge(u, v, w);
+				break;
+			case UNDIRECTED_EDGE_SORTED:
+				g.addEdgeOnGraph(u, v, w);
+				break;
+			case DIRECTED_EDGE_SORTED:
+				g.addDirectedEdgeAndReverseSortedEdge(u, v, w);
+				break;
+
 			}
 		}
 		in.close();

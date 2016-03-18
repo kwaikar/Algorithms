@@ -98,7 +98,7 @@ public class MSTUsingPriorityQueue {
 	}
 
 	public static void main(String[] args) {
-		Graph graph = Graph.acceptGraphInput(args.length > 0 ? args[0] : null, false);
+		Graph graph = Graph.acceptGraphInput(args.length > 0 ? args[0] : null, GraphType.UNDIRECTED);
 		Statistics stats = new Statistics();
 		stats.timer();
 		int output = PrimMST(graph);
