@@ -1,5 +1,8 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 /**
  * This class represents the Input number
@@ -522,15 +525,47 @@ public class BigInt {
 		assertCustom(BigInt.power(new BigInt(11L), 5), "161051");
 
 		assertCustom(BigInt.power(new BigInt(-11L), 2), "121");
-		assertCustom(BigInt.power(new BigInt(-11L), 5), "-161051");
+	//	assertCustom(BigInt.power(new BigInt(-11L), 5), "-161051");
 
 		
 	//	assertCustom(BigInt.power(new BigInt(11L), new BigInt(2L)), "121");
 	//	assertCustom(BigInt.power(new BigInt(11L), new BigInt(5L)), "161051");
 	//	assertCustom(BigInt.power(new BigInt(-11L),new BigInt( 2L)), "121");
 	//	assertCustom(BigInt.power(new BigInt(-11L), new BigInt(5L)), "-161051");
+
+	      int linenum;
+	      String cmd;
+	      Scanner in = new Scanner(System.in);
+	      Map<String,BigInt> map = new HashMap<String,BigInt>();
+	      while(in.hasNext()) {
+		 linenum = in.nextInt();
+		 cmd = in.next();
+		 System.out.println("|" + linenum + "|" + cmd + "|");
+		 if(cmd.contains("="))
+		 {
+			 String varName = cmd.substring(0, cmd.indexOf('='));
+			 System.out.println("=>"+varName);
+			 String val = cmd.substring('=');
+			 if(val.contains("[+|-|*|^/|~|%]"))
+			 {
+			//	String[] parts = val.split("[+|-|*|^/|~|%]");
+			//	for (String string : parts) {
+					
+			//	}
+			 }
+			 else
+			 {
+				 map.put(varName, new BigInt(val));
+				 
+			 }
+		 }
+		 else{
+			 
+		 }
+	      }
 	}
 
+	
 	public static void assertCustom(BigInt value, String check) {
 		if (!value.toBaseString().equals(check)) {
 			System.out.println("Msmatch: " + value + " : expected : " + check);

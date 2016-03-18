@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="DAG_and_Topological_Ordering/src"/>
+	<classpathentry kind="src" path="EulerianGraphs"/>
+	<classpathentry kind="src" path="MultiUnzip/src"/>
+	<classpathentry kind="src" path="nlogn Sorting  - Heapsort and mergesort comparison"/>
+	<classpathentry kind="src" path="Recursion using Stack"/>
+	<classpathentry kind="src" path="SetOperationsOnList/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
