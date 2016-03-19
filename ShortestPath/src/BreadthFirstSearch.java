@@ -44,7 +44,8 @@ public class BreadthFirstSearch {
 		Deque<Vertex> queue = new ArrayDeque<Vertex>();
 
 		/*
-		 * Initialization of the graph
+		 * Initialization. Every vertex in the graph is assigned distance infinity from source, 
+		 * marked not seen and has no parent
 		 */
 		for (Vertex v : graph) {
 			v.distanceObj.setDistance(0);
