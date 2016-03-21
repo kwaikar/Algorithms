@@ -25,7 +25,6 @@ import java.util.Deque;
  */
 public class BreadthFirstSearch {
 	public Graph graph;
-	public Graph result;
 
 	/**
 	 * The method calls the method graphInput. This method initialises the graph
