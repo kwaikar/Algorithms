@@ -78,7 +78,7 @@ public class BreadthFirstSearch {
 				Vertex v = edge.otherEnd(current);
 				if (v.seen == false) {
 					v.distanceObj.distance = current.distanceObj.distance
-							+ v.distanceObj.distance;
+							+ 1;
 					v.parent = current;
 					v.seen = true;
 					queue.add(v);
