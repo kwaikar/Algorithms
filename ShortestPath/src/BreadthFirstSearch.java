@@ -43,7 +43,8 @@ public class BreadthFirstSearch {
 		Deque<Vertex> queue = new ArrayDeque<Vertex>();
 
 		/*
-		 * Initialization of the graph
+		 * Initialization. Every vertex in the graph is assigned distance infinity from source, 
+		 * marked not seen and has no parent
 		 */
 		graph.initialize(graph);
 		/*
@@ -72,7 +73,10 @@ public class BreadthFirstSearch {
 				if (v.seen == false) {
 					v.distanceObj.distance = current.distanceObj.distance
 							+ 1;
+<<<<<<< HEAD
 					wmst=wmst+v.distanceObj.distance;
+=======
+>>>>>>> b0e4df9d9efae4c938554549cff1614a4e66a615
 					v.parent = current;
 					v.seen = true;
 					queue.add(v);
