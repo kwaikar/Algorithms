@@ -135,12 +135,44 @@ class Graph implements Iterable<Vertex> {
 		in.close();
 		return g;
 	}
+	
+	/**
+	 * Method to initialize all the vertices before we compute shortest path. 
+	 * 
+	 * @param graph
+	 */
+	public void initialize( Graph graph){
+		for(Vertex vertex: graph){
+			vertex.distanceObj.isInfinity=true;
+			vertex.parent=null;
+			vertex.seen=false;
+			
+		}
+	}
+	/**
+	 * seek the shortest path to v by going through u. 
+	 * @param u
+	 * @param v
+	 * @param e
+	 * @return
+	 */
+	public boolean relax(Vertex u, Vertex v, Edge e){
+		
+		if(v.distanceObj.distance> u.distanceObj.distance+e.Weight){
+			v.distanceObj.distance= u.distanceObj.distance+e.Weight;
+			v.parent=u;
+			//pq.decreaseKey(v);
+		}
+		
+		return false;
+	}
 	/**
 	 * This method accepts graph from User.
 	 * @param filePath- file path/ name.
-	 * @param isDirected- true-Directed , false- Undirected
+	 * @param isDirected- true-Directed, false- Undirected
 	 * @return- graph object. 
 	 */
+	
 	public static Graph graphInput(String filePath, boolean isDirected) {
 
 		Graph graph = null;

@@ -25,7 +25,6 @@ import java.util.Deque;
  */
 public class BreadthFirstSearch {
 	public Graph graph;
-	public Graph result;
 
 	/**
 	 * The method calls the method graphInput. This method initialises the graph
@@ -46,13 +45,7 @@ public class BreadthFirstSearch {
 		/*
 		 * Initialization of the graph
 		 */
-		for (Vertex v : graph) {
-			v.distanceObj.setDistance(0);
-			v.distanceObj.setInfinity(true);
-			v.seen = false;
-			v.parent = null;
-		}
-
+		graph.initialize(graph);
 		/*
 		 * Add source(first) vertex to the queue.Vertex is marked seen and
 		 * parent is marked to null.
@@ -70,14 +63,16 @@ public class BreadthFirstSearch {
 		 * from the source is incremented by adding the value of the distance
 		 * of current vertex and the new vertex
 		 */
-
+		int wmst=0;
 		while (!queue.isEmpty()) {
 			Vertex current = queue.remove();
 			for (Edge edge : current.Adj) {
+			
 				Vertex v = edge.otherEnd(current);
 				if (v.seen == false) {
 					v.distanceObj.distance = current.distanceObj.distance
-							+ v.distanceObj.distance;
+							+ 1;
+					wmst=wmst+v.distanceObj.distance;
 					v.parent = current;
 					v.seen = true;
 					queue.add(v);
@@ -90,6 +85,7 @@ public class BreadthFirstSearch {
 		/*
 		 * Output of the graph with shortest path. 
 		 */
+		System.out.println(wmst);
 		for (Vertex v : graph) {
 			System.out.println(v.name + " " + v.distanceObj.distance + " "
 					+ v.parent);
