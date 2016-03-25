@@ -83,7 +83,7 @@ public class SkipListImplementation {
 		}
 	}
 	public static void main(String[] args) {
-
+	SkipListImplementation obj=new SkipListImplementation(4);
 	}
 
 }
