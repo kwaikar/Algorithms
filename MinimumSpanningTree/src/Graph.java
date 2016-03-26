@@ -34,7 +34,20 @@ class Graph implements Iterable<Vertex> {
 	public void setVerts(List<Vertex> verts) {
 		this.verts = verts;
 	}
-
+	/**
+	 * Method to initialize all the vertices before we compute shortest path. 
+	 * 
+	 * @param graph
+	 */
+	public void initialize( Graph graph){
+		for(Vertex vertex: graph){
+			vertex.distanceObj.setInfinity(true);;
+			vertex.setParent(null);;
+			vertex.setSeen(false);;
+			
+		}
+	}
+	
 	/**
 	 * Constructor for Graph
 	 * 

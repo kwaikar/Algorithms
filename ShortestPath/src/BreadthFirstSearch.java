@@ -27,14 +27,6 @@ public class BreadthFirstSearch {
 	public Graph graph;
 
 	/**
-	 * The method calls the method graphInput. This method initialises the graph
-	 * object with the given input.
-	 */
-	public void readGraph() {
-		graph = Graph.graphInput("lp3_l1_in1", true);
-	}
-
-	/**
 	 * The method calculates the shorted path for a given graph with BFS
 	 * algorithm.
 	 */
@@ -51,9 +43,10 @@ public class BreadthFirstSearch {
 		 * Add source(first) vertex to the queue.Vertex is marked seen and
 		 * parent is marked to null.
 		 */
-		Vertex sourceVertex = graph.verts.get(1);
+		Vertex sourceVertex = graph.getVerts().get(1);
 		queue.add(sourceVertex);
-		sourceVertex.seen = true;
+		sourceVertex.setSeen();
+		sourceVertex.distanceObj.setInfinity(false);
 
 		/*
 		 * for each vertex in the queue. parse through all the edges of the
@@ -67,23 +60,17 @@ public class BreadthFirstSearch {
 		int wmst=0;
 		while (!queue.isEmpty()) {
 			Vertex current = queue.remove();
-			for (Edge edge : current.Adj) {
+			for (Edge edge : current.getAdj()) {
 			
 				Vertex v = edge.otherEnd(current);
-				if (v.seen == false) {
-					v.distanceObj.distance = current.distanceObj.distance
-							+ 1;
-<<<<<<< HEAD
-					wmst=wmst+v.distanceObj.distance;
-=======
->>>>>>> b0e4df9d9efae4c938554549cff1614a4e66a615
-					v.parent = current;
-					v.seen = true;
+				if (!v.isSeen()) {
+					v.distanceObj.setDistance( current.distanceObj.getDistance()+ 1);
+					wmst=wmst+v.distanceObj.getDistance();
+					v.setParent( current);
+					v.setSeen();
 					queue.add(v);
-
 				}
 			}
-
 		}
 		Timer.timer();
 		/*
@@ -91,15 +78,15 @@ public class BreadthFirstSearch {
 		 */
 		System.out.println(wmst);
 		for (Vertex v : graph) {
-			System.out.println(v.name + " " + v.distanceObj.distance + " "
-					+ v.parent);
+			System.out.println(v.getName() + " " + v.distanceObj.getDistance() + " "
+					+ v.getParent());
 		}
 	}
 
 	public static void main(String[] args) {
 
-		BreadthFirstSearch obj = new BreadthFirstSearch();
-		obj.readGraph();
-		obj.shortestPath();
+		BreadthFirstSearch bfs = new BreadthFirstSearch();
+		bfs.graph = Graph.acceptGraphInput(args[0], GraphType.DIRECTED);
+		bfs.shortestPath();
 	}
 }

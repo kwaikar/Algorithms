@@ -30,6 +30,56 @@ public class Vertex implements Comparable<Vertex>, Index {
 	private boolean outgoingSeen;
 	private boolean partOfCycle;
 	private boolean enabled = true;
+	public Distance distanceObj;
+	public Edge parentEdge;
+
+	/**
+	 * @return the parentEdge
+	 */
+	public Edge getParentEdge() {
+		return parentEdge;
+	}
+
+	/**
+	 * @param parentEdge
+	 *            the parentEdge to set
+	 */
+	public void setParentEdge(Edge parentEdge) {
+		this.parentEdge = parentEdge;
+	}
+
+	/*
+	 * Distance to the vertex from the source vertex The inner class has value -
+	 * This distance value isInfinity- The boolean value represents the value of
+	 * distance is infinite or not.
+	 * 
+	 */
+	public class Distance {
+		Distance(int distance, boolean isInfinity) {
+			this.distance = distance;
+			this.isInfinity = isInfinity;
+		}
+
+		public int getDistance() {
+			return distance;
+		}
+
+		public void setDistance(int distance) {
+			this.distance = distance;
+		}
+
+		public boolean isInfinity() {
+			return isInfinity;
+		}
+
+		public void setInfinity(boolean isInfinity) {
+			this.isInfinity = isInfinity;
+		}
+
+		private int distance;
+		private boolean isInfinity;
+
+	}
 
 	/**
 	 * @return the incomingVisit
@@ -143,6 +193,7 @@ public class Vertex implements Comparable<Vertex>, Index {
 				return o1.getWeight() - o2.getWeight();
 			}
 		});
+		distanceObj = new Distance(0, true);
 
 		sortedRevEdges = new PriorityQueue<Edge>(new Comparator<Edge>() {
 			@Override
@@ -153,7 +204,7 @@ public class Vertex implements Comparable<Vertex>, Index {
 	}
 
 	Vertex(int n, List<Edge> cycle) {
-		if (cycle!=null && cycle.size()!=0) {
+		if (cycle != null && cycle.size() != 0) {
 			/**
 			 * Custom constructor for Pseudo Vertices.
 			 */
@@ -163,21 +214,33 @@ public class Vertex implements Comparable<Vertex>, Index {
 			parent = null;
 			Adj = new ArrayList<Edge>();
 			revAdj = new ArrayList<Edge>(); /* only for directed graphs */
-			sortedRevEdges = Graph.getNewEdgeSortedPriorityQueue(); /* Only for Directed Edges which need sorting on weight. */
-			sortedEdges =Graph.getNewEdgeSortedPriorityQueue(); /* Only for Directed Edges which need sorting on weight. */
+			sortedRevEdges = Graph
+					.getNewEdgeSortedPriorityQueue(); /*
+														 * Only for Directed Edges
+														 * which need sorting on
+														 * weight.
+														 */
+			sortedEdges = Graph
+					.getNewEdgeSortedPriorityQueue(); /*
+														 * Only for Directed Edges
+														 * which need sorting on
+														 * weight.
+														 */
+			distanceObj = new Distance(0, true);
+
 		}
 	}
- 
+
 	/**
 	 * @return the sortedEdges
 	 */
 	public PriorityQueue<Edge> getSortedEdges() {
 		return sortedEdges;
 	}
- 
 
 	/**
-	 * @param sortedEdges the sortedEdges to set
+	 * @param sortedEdges
+	 *            the sortedEdges to set
 	 */
 	public void setSortedEdges(PriorityQueue<Edge> sortedEdges) {
 		this.sortedEdges = sortedEdges;
@@ -406,17 +469,36 @@ public class Vertex implements Comparable<Vertex>, Index {
 
 	@Override
 	public int compareTo(Vertex o) {
-		return this.getDistance() - o.getDistance();
-	}
+
+		return this.distanceObj.getDistance() - o.distanceObj.getDistance();
+		
+		/*if (this.distanceObj != null) {
+			if (!this.distanceObj.isInfinity && !o.distanceObj.isInfinity) {
+				return this.distanceObj.getDistance() - o.distanceObj.getDistance();
+			} else if (o.distanceObj.isInfinity) {
+				return -1;
+			} else if (this.distanceObj.isInfinity) {
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		} else {
+			return this.distance - o.distance;
+		}
+
+*/	}
 
 	public class PseudoVertex {
 		List<Edge> cycle = null;
 		Queue<Edge> originalIncoming = Graph.getNewEdgeSortedPriorityQueue();
-		List<Edge> originalOutgoing= new LinkedList<Edge>();
+		List<Edge> originalOutgoing = new LinkedList<Edge>();
 		List<Edge> cycleEdges = new ArrayList<>();
-		public PseudoVertex(List<Edge>cycle){
+
+		public PseudoVertex(List<Edge> cycle) {
 			super();
-			this.cycle=cycle;
+			this.cycle = cycle;
 		}
 
 		/**
@@ -427,7 +509,8 @@ public class Vertex implements Comparable<Vertex>, Index {
 		}
 
 		/**
-		 * @param cycleEdges the cycleEdges to set
+		 * @param cycleEdges
+		 *            the cycleEdges to set
 		 */
 		public void setCycleEdges(List<Edge> cycleEdges) {
 			this.cycleEdges = cycleEdges;
@@ -456,10 +539,11 @@ public class Vertex implements Comparable<Vertex>, Index {
 		}
 
 		/**
-		 * @param originalOutgoing the originalOutgoing to set
+		 * @param originalOutgoing
+		 *            the originalOutgoing to set
 		 */
-		public void addOriginalOutgoing( Edge originalOutgoing) {
-			this.originalOutgoing .add(originalOutgoing);
+		public void addOriginalOutgoing(Edge originalOutgoing) {
+			this.originalOutgoing.add(originalOutgoing);
 		}
 
 		/**
