@@ -48,9 +48,20 @@ public class Dijkstra extends IndexedPriorityQueue {
 		}
 		
 		
-		while(!indexedPQ.queue.isEmpty()){
-			System.out.println(indexedPQ.queue.remove(0));
+		int i=1;
+		while(i<=indexedPQ.lastIndex){
+			Vertex u=indexedPQ.remove();
+			u.seen=true;
+			for(Edge e:u.Adj){
+			Vertex v=e.otherEnd(u);
+			if(v.distanceObj.distance> u.distanceObj.distance+e.Weight){
+				v.distanceObj.distance= u.distanceObj.distance+e.Weight;
+				v.parent=u;
+				//pq.decreaseKey(v);
+			}
+			}
 		}
+		
 		}
 	
 
