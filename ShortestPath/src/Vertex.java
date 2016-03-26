@@ -76,7 +76,7 @@ public class Vertex implements Comparable<Vertex>, Index {
 			this.isInfinity = isInfinity;
 		}
 
-		private int distance;
+		int distance;
 		private boolean isInfinity;
 
 	}
@@ -188,7 +188,6 @@ public class Vertex implements Comparable<Vertex>, Index {
 		Adj = new ArrayList<Edge>();
 		revAdj = new ArrayList<Edge>(); /* only for directed graphs */
 		sortedEdges = new PriorityQueue<Edge>(new Comparator<Edge>() {
-			@Override
 			public int compare(Edge o1, Edge o2) {
 				return o1.getWeight() - o2.getWeight();
 			}
@@ -196,7 +195,6 @@ public class Vertex implements Comparable<Vertex>, Index {
 		distanceObj = new Distance(0, true);
 
 		sortedRevEdges = new PriorityQueue<Edge>(new Comparator<Edge>() {
-			@Override
 			public int compare(Edge o1, Edge o2) {
 				return o1.getWeight() - o2.getWeight();
 			}
@@ -467,7 +465,6 @@ public class Vertex implements Comparable<Vertex>, Index {
 		this.enabled = enabled;
 	}
 
-	@Override
 	public int compareTo(Vertex o) {
 
 		return this.distanceObj.getDistance() - o.distanceObj.getDistance();
@@ -494,7 +491,7 @@ public class Vertex implements Comparable<Vertex>, Index {
 		List<Edge> cycle = null;
 		Queue<Edge> originalIncoming = Graph.getNewEdgeSortedPriorityQueue();
 		List<Edge> originalOutgoing = new LinkedList<Edge>();
-		List<Edge> cycleEdges = new ArrayList<>();
+		List<Edge> cycleEdges = new ArrayList<Edge>();
 
 		public PseudoVertex(List<Edge> cycle) {
 			super();

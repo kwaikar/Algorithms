@@ -56,8 +56,8 @@ class Graph implements Iterable<Vertex> {
 	 *            : int - number of vertices
 	 */
 	Graph(int size) {
-		numNodes = size;
-		verts = new ArrayList<>( );
+		setNumNodes(size);
+		verts = new ArrayList<Vertex>( );
 		verts.add(0, null);
 		// create an array of Vertex objects
 		for (int i = 1; i <= size; i++)
@@ -93,7 +93,6 @@ class Graph implements Iterable<Vertex> {
 	 */
 	public static PriorityQueue<Edge> getNewEdgeSortedPriorityQueue() {
 		return new PriorityQueue<Edge>(new Comparator<Edge>() {
-			@Override
 			public int compare(Edge o1, Edge o2) {
 				return o1.getWeight() - o2.getWeight();
 			}
@@ -273,7 +272,7 @@ class Graph implements Iterable<Vertex> {
 	 * @return
 	 */
 	public List<Edge> getParentEdgesAndPrintPath(String typeOfGraph) {
-		List<Edge> edges = new LinkedList<>();
+		List<Edge> edges = new LinkedList<Edge>();
 		int total = 0;
 		StringBuilder sb = new StringBuilder();
 		for (Vertex vertex : this) {
@@ -297,7 +296,7 @@ class Graph implements Iterable<Vertex> {
 	 * @param directed
 	 * @return
 	 */
-	private static Graph readGraph(Scanner in, GraphType graphType) {
+	static Graph readGraph(Scanner in, GraphType graphType) {
 		// read the graph related parameters
 		int n = in.nextInt(); // number of vertices in the graph
 		int m = in.nextInt(); // number of edges in the graph
@@ -330,5 +329,13 @@ class Graph implements Iterable<Vertex> {
 		}
 		in.close();
 		return g;
+	}
+
+	public int getNumNodes() {
+		return numNodes;
+	}
+
+	public void setNumNodes(int numNodes) {
+		this.numNodes = numNodes;
 	}
 }

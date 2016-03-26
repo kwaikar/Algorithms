@@ -15,7 +15,7 @@ public class IndexedPriorityQueue {
 	
 		public void percolateUp(int i){
 		Vertex element=queue.get(i);
-		while(queue.get((i-1)/2).distanceObj.distance<=element.distanceObj.distance){
+		while(queue.get((i-1)/2).distanceObj.getDistance()<=element.distanceObj.getDistance()){
 		queue.set(i, queue.get((i-1)/2));
 		i=(i-1)/2;
 		}
