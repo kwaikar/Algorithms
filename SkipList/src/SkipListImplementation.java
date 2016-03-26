@@ -166,6 +166,7 @@ public class SkipListImplementation {
 	}
 
 	public static void main(String[] args) {
+<<<<<<< HEAD
 		int size = 10000, del = 100;
 		SkipListImplementation obj = new SkipListImplementation(size);
 
@@ -191,6 +192,9 @@ public class SkipListImplementation {
 			obj.remove(i);
 		}
 		Timer.timer();
+=======
+	SkipListImplementation obj=new SkipListImplementation(4);
+>>>>>>> 3fed8b01eba85e0e443363f1396eaaa519001d50
 	}
 
 }
