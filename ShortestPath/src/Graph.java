@@ -35,21 +35,25 @@ class Graph implements Iterable<Vertex> {
 	public void setVerts(List<Vertex> verts) {
 		this.verts = verts;
 	}
+
 	/**
-	 * Method to initialize all the vertices before we compute shortest path. 
+	 * Method to initialize all the vertices before we compute shortest path.
 	 * 
 	 * @param graph
 	 */
-	public void initialize(){
-		for(Vertex vertex: this){
-			vertex.distanceObj.setInfinity(true);;
-			vertex.setParent(null);;
-			vertex.setSeen(false);;
+	public void initialize() {
+		for (Vertex vertex : this) {
+			vertex.distanceObj.setInfinity(true);
+			;
+			vertex.setParent(null);
+			;
+			vertex.setSeen(false);
+			;
 			vertex.setCount(0);
-			
+
 		}
 	}
-	
+
 	/**
 	 * Constructor for Graph
 	 * 
@@ -58,7 +62,7 @@ class Graph implements Iterable<Vertex> {
 	 */
 	Graph(int size) {
 		setNumNodes(size);
-		verts = new ArrayList<Vertex>( );
+		verts = new ArrayList<Vertex>();
 		verts.add(0, null);
 		// create an array of Vertex objects
 		for (int i = 1; i <= size; i++)
@@ -89,7 +93,9 @@ class Graph implements Iterable<Vertex> {
 	}
 
 	/**
-	 * This function returns a new empty priority Queue that sorts edges on weight.
+	 * This function returns a new empty priority Queue that sorts edges on
+	 * weight.
+	 * 
 	 * @return
 	 */
 	public static PriorityQueue<Edge> getNewEdgeSortedPriorityQueue() {
@@ -133,7 +139,8 @@ class Graph implements Iterable<Vertex> {
 		Edge e = new Edge(head, tail, weight);
 		head.getSortedEdges().add(e);
 		/**
-		 * Sorted reverse edge can be used for finding the minimum incoming edge into the node.
+		 * Sorted reverse edge can be used for finding the minimum incoming edge
+		 * into the node.
 		 */
 		tail.getSortedRevEdges().add(e);
 	}
@@ -267,28 +274,32 @@ class Graph implements Iterable<Vertex> {
 		}
 		return graph;
 	}
-	
+
 	/**
-	 * This method returns all parent edges and prints the path along with total shortest path length.
+	 * This method returns all parent edges and prints the path along with total
+	 * shortest path length.
+	 * 
 	 * @return
 	 */
 	public List<Edge> getParentEdgesAndPrintPath(String typeOfGraph) {
 		List<Edge> edges = new LinkedList<Edge>();
 		int total = 0;
 		StringBuilder sb = new StringBuilder();
-		for (Vertex vertex : this) {
-			total += vertex.distanceObj.getDistance();
-			sb.append(vertex.getName() + " "
-					+ (vertex.distanceObj.isInfinity() ? "INF" : vertex.distanceObj.getDistance()) + " "
-					+ (vertex.distanceObj.isInfinity() ? "-" : (vertex.getParent() == null ? "-" : vertex.getParent()))
-					+ "\n");
-			edges.add(vertex.getParentEdge());
+		if (this.getVerts().size() <= 1000) {
+			for (Vertex vertex : this) {
+				total += vertex.distanceObj.getDistance();
+				sb.append(vertex.getName() + " "
+						+ (vertex.distanceObj.isInfinity() ? "INF" : vertex.distanceObj.getDistance()) + " "
+						+ (vertex.distanceObj.isInfinity() ? "-"
+								: (vertex.getParent() == null ? "-" : vertex.getParent()))
+						+ "\n");
+				edges.add(vertex.getParentEdge());
+			}
 		}
-		System.out.println(typeOfGraph+" " + total);
+		System.out.println(typeOfGraph + " " + total);
 		System.out.println(sb.toString());
 		return edges;
 	}
-
 
 	/**
 	 * This method reads graph input from scanner and returns the

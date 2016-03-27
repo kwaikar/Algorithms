@@ -36,7 +36,6 @@ public class DAGShortest {
 		sourceVertex.distanceObj.setDistance(0);
 		sourceVertex.distanceObj.setInfinity(false);
 		sourceVertex.setSeen();
-		System.out.println(topOrderedGraphStack);
 
 		while (!topOrderedGraphStack.isEmpty()) {
 			Vertex u = topOrderedGraphStack.pop();
