@@ -15,11 +15,10 @@ import java.util.Stack;
  * 
  */
 public class DAGShortest {
-	Graph graph;
 
 	/*
 	 * Following is complete algorithm for finding shortest distances. 
-	 * 1) Initialize dist[] = {INF, INF, ….} and dist[s] = 0 where s is 
+	 * 1) Initialize dist[] = {INF, INF,.} and dist[s] = 0 where s is 
 	 * the source vertex. 
 	 * 2) Create a toplogical order of all vertices. 
 	 * 3) Do following for every vertex u in topological order.
@@ -27,11 +26,11 @@ public class DAGShortest {
 	 *    if (distance[v] > distance[u] + weight(u, v))
 	 *        distance[v] = distance[u] + weight(u, v)
 	 */
-	public List<Edge> shortestPath() {
+	public static  List<Edge> shortestPath(Graph graph) {
 		Stack<Vertex> topOrderedGraphStack = TopologicalOrdering
 				.topologicalOrderUsingDFS(graph);
 		
-		graph.initialize(graph);
+		graph.initialize();
 
 		Vertex sourceVertex = graph.getVerts().get(1);
 		sourceVertex.distanceObj.setDistance(0);
@@ -55,19 +54,15 @@ public class DAGShortest {
 					u.setParent(v);
 					u.setParentEdge(edge.reverseEdge(edge));
 				}
-
 			}
-
 		}
-
 		return graph.getParentEdgesAndPrintPath("DAG");
 	}
 
 	public static void main(String args[]) {
 
 		DAGShortest obj = new DAGShortest();
-		obj.graph = Graph.acceptGraphInput(args[0], GraphType.DIRECTED);
-		obj.shortestPath();
+		obj.shortestPath(Graph.acceptGraphInput(args[0], GraphType.DIRECTED));
 	}
 
 }

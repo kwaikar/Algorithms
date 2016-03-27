@@ -40,8 +40,8 @@ class Graph implements Iterable<Vertex> {
 	 * 
 	 * @param graph
 	 */
-	public void initialize( Graph graph){
-		for(Vertex vertex: graph){
+	public void initialize(){
+		for(Vertex vertex: this){
 			vertex.distanceObj.setInfinity(true);;
 			vertex.setParent(null);;
 			vertex.setSeen(false);;
@@ -80,7 +80,7 @@ class Graph implements Iterable<Vertex> {
 		Vertex v = verts.get(b);
 		Edge e = new Edge(u, v, weight);
 		u.getAdj().add(e);
-		v.getAdj().add(e);
+		v.getAdj().add(Vertex.transposeEdge(e));
 	}
 
 	void initializeEdgeSortedQueue() {
@@ -168,7 +168,7 @@ class Graph implements Iterable<Vertex> {
 		Vertex tail = verts.get(b);
 		Edge e = new Edge(head, tail, weight);
 		head.getAdj().add(e);
-		tail.getRevAdj().add(e);
+		tail.getRevAdj().add(Edge.reverseEdge(e));
 	}
 
 	public Graph transpose(boolean directed) {

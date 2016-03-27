@@ -8,18 +8,18 @@ import java.util.List;
  */
 public class Dijkstra {
 
-	Graph graph;
 
+ 
 	/**
 	 * The method calls the method graphInput. This method initializes the graph
 	 * object with the given input.
 	 */
 
-	public List<Edge> shortestPath() {
+	public static  List<Edge> shortestPath(Graph graph) {
 		/*
 		 * Initialize the vertices.
 		 */
-		graph.initialize(graph);
+		graph.initialize();
 
 		IndexedHeap<Vertex> queue = new IndexedHeap<Vertex>(graph.getVerts().size());
 		/*
@@ -80,8 +80,7 @@ public class Dijkstra {
 	
 	public static void main(String[] args) {
 		Dijkstra obj = new Dijkstra();
-		obj.graph = Graph.acceptGraphInput(args[0], GraphType.DIRECTED);
-		obj.shortestPath();
+		obj.shortestPath(Graph.acceptGraphInput(args[0], GraphType.DIRECTED));
 
 	}
 

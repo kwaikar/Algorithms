@@ -155,8 +155,7 @@ public class TopologicalOrdering {
 	 * @param stack
 	 * @param visited
 	 */
-	private static void topologicalSort(Vertex currentVertex,
-			Stack<Vertex> stack, Set<Vertex> visited) {
+	private static void topologicalSort(Vertex currentVertex, Stack<Vertex> stack, Set<Vertex> visited) {
 		visited.add(currentVertex);
 		currentVertex.setSeen(true);
 		List<Edge> edgeList = currentVertex.getAdj();
@@ -222,12 +221,29 @@ public class TopologicalOrdering {
 		return false;
 	}
 
+	public static boolean isVertexCyclic(Vertex vertex, Set<Vertex> path) {
+		if (path.contains(vertex)) {
+	//		System.out.println("Cycle found " + path);
+			return true;
+		} else {
+			path.add(vertex);
+			vertex.setSeen(true);
+			List<Edge> edgeList = vertex.getAdj();
+			for (Edge edge : edgeList) {
+				if (isCyclic(edge.getTo(), path)) {
+					return false;
+				}
+			}
+		}
+		path.remove(vertex);
+		return false;
+	}
+
 	public static void main(String[] inputFilePath) throws FileNotFoundException {
 
-		
 		// passing graph as an input.
 		Scanner sc = null;
-		File inputFile = inputFilePath.length>0?new File(inputFilePath[0]): null;
+		File inputFile = inputFilePath.length > 0 ? new File(inputFilePath[0]) : null;
 		if (inputFile != null && inputFile.exists()) {
 			sc = new Scanner(inputFile);
 		} else {
@@ -235,10 +251,7 @@ public class TopologicalOrdering {
 					"Please enter dimensions of the graph (#nodes, #edges) followed by edges in format (left,right,weight)");
 			sc = new Scanner(System.in);
 		}
-		
-		
-		
-		
+
 		/**
 		 * Creating a graph object. in -taking input from file( vertices and
 		 * nodes) true- The graph is a directed one.
@@ -247,7 +260,7 @@ public class TopologicalOrdering {
 		Graph graphobject = Graph.readGraph(sc, GraphType.DIRECTED);
 
 		List<Vertex> topological_order = toplogicalOrder1(graphobject);
-		
+
 		System.out.println("The topological order after the implementation of algorithm1:");
 		System.out.println();
 
@@ -257,15 +270,14 @@ public class TopologicalOrdering {
 		System.out.println();
 		System.out.println();
 		System.out.println(" The Timer details");
-		
+
 		Timer.timer();
 		Timer.timer();
 		Stack<Vertex> topological_order2 = topologicalOrderUsingDFS(graphobject);
 		System.out.println();
-		
-		
+
 		System.out.println("The topological order after the implementation of algorithm2:");
-		
+
 		while (!((topological_order2).isEmpty())) {
 			System.out.print(" " + topological_order2.pop());
 		}

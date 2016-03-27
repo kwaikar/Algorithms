@@ -266,15 +266,21 @@ public class Vertex implements Comparable<Vertex>, Index {
 	 */
 	public void transposeAdjecencyList() {
 		for (Edge edge : this.getAdj()) {
-			Vertex temp = edge.getTo();
-			edge.setTo(edge.getFrom());
-			edge.setFrom(temp);
+			transposeEdge(edge);
 		}
 		for (Edge edge : this.getRevAdj()) {
-			Vertex temp = edge.getTo();
-			edge.setTo(edge.getFrom());
-			edge.setFrom(temp);
+			transposeEdge(edge);
 		}
+	}
+
+	/**
+	 * @param edge
+	 */
+	public static Edge transposeEdge(Edge edge) {
+		Vertex temp = edge.getTo();
+		edge.setTo(edge.getFrom());
+		edge.setFrom(temp);
+		return edge;
 	}
 
 	/**

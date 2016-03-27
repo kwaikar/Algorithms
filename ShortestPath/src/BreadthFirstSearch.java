@@ -25,21 +25,19 @@ import java.util.List;
  * 
  */
 public class BreadthFirstSearch {
-	public Graph graph;
 
 	/**
 	 * The method calculates the shorted path for a given graph with BFS
 	 * algorithm.
 	 */
-	public List<Edge> shortestPath() {
-		Timer.timer();
+	public static List<Edge> shortestPath(Graph graph) {
 		Deque<Vertex> queue = new ArrayDeque<Vertex>();
 
 		/*
-		 * Initialization. Every vertex in the graph is assigned distance infinity from source, 
-		 * marked not seen and has no parent
+		 * Initialization. Every vertex in the graph is assigned distance
+		 * infinity from source, marked not seen and has no parent
 		 */
-		graph.initialize(graph);
+		graph.initialize();
 		/*
 		 * Add source(first) vertex to the queue.Vertex is marked seen and
 		 * parent is marked to null.
@@ -55,34 +53,25 @@ public class BreadthFirstSearch {
 		 * queue. we repeat the process of parsing through the edges of the
 		 * vertices that are not visited before. The current vertex becomes the
 		 * parent of the other end of the edge. The distance to the vertex v
-		 * from the source is incremented by adding the value of the distance
-		 * of current vertex and the new vertex
+		 * from the source is incremented by adding the value of the distance of
+		 * current vertex and the new vertex
 		 */
-		int wmst=0;
+		int wmst = 0;
 		while (!queue.isEmpty()) {
 			Vertex current = queue.remove();
 			for (Edge edge : current.getAdj()) {
-			
+
 				Vertex v = edge.otherEnd(current);
 				if (!v.isSeen()) {
-					v.distanceObj.setDistance( current.distanceObj.getDistance()+ edge.getWeight());
+					v.distanceObj.setDistance(current.distanceObj.getDistance() + edge.getWeight());
 					v.distanceObj.setInfinity(false);
-					wmst=wmst+v.distanceObj.getDistance();
-					v.setParent( current);
+					wmst = wmst + v.distanceObj.getDistance();
+					v.setParent(current);
 					v.setParentEdge(edge);
 					v.setSeen();
 					queue.add(v);
 				}
 			}
-		}
-		Timer.timer();
-		/*
-		 * Output of the graph with shortest path. 
-		 */
-		System.out.println(wmst);
-		for (Vertex v : graph) {
-			System.out.println(v.getName() + " " + v.distanceObj.getDistance() + " "
-					+ v.getParent());
 		}
 		return graph.getParentEdgesAndPrintPath("BFS");
 	}
@@ -90,7 +79,6 @@ public class BreadthFirstSearch {
 	public static void main(String[] args) {
 
 		BreadthFirstSearch bfs = new BreadthFirstSearch();
-		bfs.graph = Graph.acceptGraphInput(args[0], GraphType.DIRECTED);
-		bfs.shortestPath();
+		bfs.shortestPath(Graph.acceptGraphInput(args[0], GraphType.DIRECTED));
 	}
 }

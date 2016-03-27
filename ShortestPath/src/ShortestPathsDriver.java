@@ -1,15 +1,28 @@
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * This program executes appropriate shortest path algorithm based on the graph
+ * condition.
+ * 
+ * @author Kanchan Waikar Date Created : Mar 27, 2016 - 1:16:13 PM
+ *
+ */
 public class ShortestPathsDriver {
 
 	public static void main(String[] args) {
-
+		/**
+		 * Accept graph input from user.
+		 */
 		Graph graph = Graph.acceptGraphInput(args[0], GraphType.DIRECTED);
-		int weight = graph.getVerts().get(0).getAdj().get(0).getWeight();
+		int weight = graph.getVerts().get(1).getAdj().get(0).getWeight();
 		boolean hasUniformEdges = true;
 		boolean negativeWeights = false;
 		boolean isCyclic = false;
+		/**
+		 * Loop through vertices in order to check whether 1. Graph has uniform
+		 * edges 2. Graph has negative weights 3. Graph is acyclic
+		 */
 		for (Vertex vertex : graph) {
 
 			for (Edge edge : vertex.getAdj()) {
@@ -21,26 +34,34 @@ public class ShortestPathsDriver {
 					negativeWeights = true;
 				}
 			}
-			if (TopologicalOrdering.isCyclic(vertex, new HashSet<Vertex>())) {
+		 
+			if (TopologicalOrdering.isVertexCyclic(vertex, new HashSet<Vertex>())) {
 				isCyclic = true;
 			}
 		}
-		
-		List<Edge> edges = null;
-		if (hasUniformEdges && !negativeWeights) {
-			BreadthFirstSearch bfs = new BreadthFirstSearch();
-			edges = bfs.shortestPath();
-		} else if (!negativeWeights && !isCyclic) {
-			DAGShortest dag = new DAGShortest();
-			edges = dag.shortestPath();
-		} else if (!negativeWeights && isCyclic) {
-			Dijkstra dijkstra = new Dijkstra();
-			edges = dijkstra.shortestPath();
-		} else {
-			BellmanFord bf = new BellmanFord();
-			edges = bf.getShortestPath(graph);
-		}
 
+		Statistics stats = new Statistics();
+		stats.timer();
+		List<Edge> edges = null;
+		/**
+		 * Based on above flags, call appropriate algorithm.
+		 */
+		if (hasUniformEdges && !negativeWeights) {
+			edges = BreadthFirstSearch.shortestPath(graph);
+		} else if (!isCyclic) {
+			edges = DAGShortest.shortestPath(graph);
+		} else if (!negativeWeights ) {
+			edges = Dijkstra.shortestPath(graph);
+		} else {
+			/**
+			 * umbrella implementation
+			 */
+			edges = BellmanFord.getShortestPath(graph);
+		}
+		/**
+		 * Log time taken.
+		 */
+		stats.timer("Shortest Path Identification");
 		for (Vertex vertex : graph) {
 			vertex.setSeen(false);
 		}
