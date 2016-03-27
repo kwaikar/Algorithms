@@ -19,7 +19,7 @@ public class DAGShortest {
 
 	/*
 	 * Following is complete algorithm for finding shortest distances. 
-	 * 1) Initialize dist[] = {INF, INF, ….} and dist[s] = 0 where s is 
+	 * 1) Initialize dist[] = {INF, INF, â€¦.} and dist[s] = 0 where s is 
 	 * the source vertex. 
 	 * 2) Create a toplogical order of all vertices. 
 	 * 3) Do following for every vertex u in topological order.
@@ -46,8 +46,7 @@ public class DAGShortest {
 			for (Edge edge : u.getRevAdj()) {
 				Vertex v = edge.otherEnd(u);
 
-				if (v.isSeen()
-						&& (edge.getWeight() + v.distanceObj.getDistance()) < minWeight) {
+				if (v.isSeen()	&& (edge.getWeight() + v.distanceObj.getDistance()) < minWeight) {
 
 					minWeight = edge.getWeight() + v.distanceObj.getDistance();
 					u.distanceObj.setDistance(minWeight);
