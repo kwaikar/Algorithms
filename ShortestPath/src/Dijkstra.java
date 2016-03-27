@@ -3,8 +3,12 @@ import java.util.List;
 
 /**
  * 
- * @author Maringanty, Krishna Kavya 
- * Date Created : Mar 26, 2016 - 2:48:15 PM
+ * Dijkstra's algorithm is an algorithm for finding the shortest paths between
+ * nodes in a graph. Dijkstra's algorithm will assign some initial distance
+ * values for node to source and will try to improve them step by step.
+ * 
+ * 
+ * @author Maringanty, Krishna Kavya Date Created : Mar 26, 2016 - 2:48:15 PM
  */
 public class Dijkstra {
 
@@ -21,11 +25,12 @@ public class Dijkstra {
 		 */
 		graph.initialize(graph);
 
-		IndexedHeap<Vertex> queue = new IndexedHeap<Vertex>(graph.getVerts().size());
+		IndexedHeap<Vertex> queue = new IndexedHeap<Vertex>(graph.getVerts()
+				.size());
 		/*
 		 * compute distance to a vertex v that is the shortest distance from
 		 * source to a vertex v and add to the indexed priority queue.
-		 *
+		 * 
 		 * Add source(first) vertex to the queue.Vertex is marked seen and
 		 * parent is marked to null.
 		 */
@@ -33,22 +38,16 @@ public class Dijkstra {
 		sourceVertex.setSeen();
 		sourceVertex.distanceObj.setInfinity(false);
 		queue.insert(sourceVertex);
-	//	System.out.println("The vertexa t zeroth location of the oq is" + queue.peek());
-		// for every vertex calculate the shortest from the source to the
-		// vertex.
+		// for every vertex calculate the shortest from the source to the vertex.
 		for (Vertex vertex : graph) {
-		//	System.out.println(vertex.getName() + " is the current node.");
 			Vertex current = vertex;
 			if (!current.distanceObj.isInfinity()) {
 				for (Edge edge : current.getAdj()) {
 					Vertex v = edge.otherEnd(current);
 					if (v.isSeen() == false) {
-						// System.out.println("distance from source and"+"
-						// "+v.name+"the other end is");
 						v.distanceObj.setInfinity(false);
-						/*System.out.println("Setting distance for " + v + " : " + " ----" + current.getName() + "=>"
-								+ current.distanceObj.getDistance() + "-" + edge.getWeight());*/
-						v.distanceObj.setDistance(current.distanceObj.getDistance() + edge.getWeight());
+						v.distanceObj.setDistance(current.distanceObj
+								.getDistance() + edge.getWeight());
 						System.out.println(v.distanceObj.getDistance());
 						v.setParent(current);
 						v.setParentEdge(edge);
@@ -58,15 +57,32 @@ public class Dijkstra {
 				}
 			}
 		}
-
-		System.out.println(queue);
+		
+		
+		/**
+		 * Calculation of Shortest Path.
+		 * 
+		 * For every Vertex removed from the indexed Priority queue, consider
+		 * all of its unvisited neighbors. Compare the newly calculated
+		 * tentative distance to the current assigned value and assign the
+		 * smaller one. For example, if the current node A is marked with a
+		 * distance of 6, and the edge connecting it with a neighbor B has
+		 * length 2, then the distance to B (through A) will be 6 + 2 = 8. If B
+		 * was previously marked with a distance greater than 8 then change it
+		 * to 8. Otherwise, keep the current value.
+		 * 
+		 * This is performed for every vertex removed from the priority Queue and
+		 * decrease key operation is performed.
+		 */
 		while (!queue.isEmpty()) {
 			Vertex u = (Vertex) queue.remove();
 			u.setSeen();
 			for (Edge e : u.getAdj()) {
 				Vertex v = e.otherEnd(u);
-				if (v.distanceObj.getDistance() > u.distanceObj.getDistance() + e.getWeight()) {
-					v.distanceObj.setDistance(u.distanceObj.getDistance() + e.getWeight());
+				if (v.distanceObj.getDistance() > u.distanceObj.getDistance()
+						+ e.getWeight()) {
+					v.distanceObj.setDistance(u.distanceObj.getDistance()
+							+ e.getWeight());
 					v.setParent(u);
 					v.distanceObj.setInfinity(false);
 					v.setParentEdge(e);
@@ -74,10 +90,9 @@ public class Dijkstra {
 				}
 			}
 		}
-		return graph.getParentEdgesAndPrintPath("dij");
+		return graph.getParentEdgesAndPrintPath("DIJ");
 	}
 
-	
 	public static void main(String[] args) {
 		Dijkstra obj = new Dijkstra();
 		obj.graph = Graph.acceptGraphInput(args[0], GraphType.DIRECTED);

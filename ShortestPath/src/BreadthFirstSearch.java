@@ -1,6 +1,5 @@
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.List;
 
 /**
  * 
@@ -31,7 +30,7 @@ public class BreadthFirstSearch {
 	 * The method calculates the shorted path for a given graph with BFS
 	 * algorithm.
 	 */
-	public List<Edge> shortestPath() {
+	public void shortestPath() {
 		Timer.timer();
 		Deque<Vertex> queue = new ArrayDeque<Vertex>();
 
@@ -65,11 +64,9 @@ public class BreadthFirstSearch {
 			
 				Vertex v = edge.otherEnd(current);
 				if (!v.isSeen()) {
-					v.distanceObj.setDistance( current.distanceObj.getDistance()+ edge.getWeight());
-					v.distanceObj.setInfinity(false);
+					v.distanceObj.setDistance( current.distanceObj.getDistance()+ 1);
 					wmst=wmst+v.distanceObj.getDistance();
 					v.setParent( current);
-					v.setParentEdge(edge);
 					v.setSeen();
 					queue.add(v);
 				}
@@ -84,7 +81,6 @@ public class BreadthFirstSearch {
 			System.out.println(v.getName() + " " + v.distanceObj.getDistance() + " "
 					+ v.getParent());
 		}
-		return graph.getParentEdgesAndPrintPath("BFS");
 	}
 
 	public static void main(String[] args) {
