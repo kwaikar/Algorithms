@@ -44,13 +44,9 @@ class Graph implements Iterable<Vertex> {
 	public void initialize() {
 		for (Vertex vertex : this) {
 			vertex.distanceObj.setInfinity(true);
-			;
 			vertex.setParent(null);
-			;
 			vertex.setSeen(false);
-			;
 			vertex.setCount(0);
-
 		}
 	}
 

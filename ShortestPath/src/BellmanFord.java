@@ -22,22 +22,25 @@ public class BellmanFord {
 		graph.initialize();
 		Vertex sourceVertex = graph.getVerts().get(1);
 		sourceVertex.setSeen();
+		sourceVertex.setParent(null);
+		sourceVertex.distanceObj.setDistance(0);
 		sourceVertex.distanceObj.setInfinity(false);
 		queue.add(sourceVertex);
 		/**
 		 * Start processing Queue until it becomes empty and shortest path has
 		 * been found.
-		 */
+		 */ 
 		while (!queue.isEmpty()) {
 			Vertex u = queue.remove();
-			u.setSeen();
+			u.setSeen(false);
+			u.setCount(u.getCount() + 1);
 			if (u.getCount() >= graph.getVerts().size()) {
 				/**
 				 * vertex has been visited more times than the |V| this means
 				 * the cycle does exist! Break and exit out of the loop
 				 */
 				System.out.println("Graph has negative cycle");
-				break;
+				//return null;
 			}
 			for (Edge edge : u.getAdj()) {
 				Vertex v = edge.otherEnd(u);
@@ -46,7 +49,7 @@ public class BellmanFord {
 				 * optimal than existing one.
 				 */
 				if (v.distanceObj.isInfinity()
-						|| (v.distanceObj.getDistance() > (u.distanceObj.getDistance() + edge.getWeight()))) {
+						|| (!u.distanceObj.isInfinity() && (v.distanceObj.getDistance() > (u.distanceObj.getDistance() + edge.getWeight())))) {
 					v.distanceObj.setDistance(u.distanceObj.getDistance() + edge.getWeight());
 					v.distanceObj.setInfinity(false);
 					v.setParent(u);
@@ -58,20 +61,18 @@ public class BellmanFord {
 						queue.add(v);
 						v.setSeen();
 					}
-					u.setCount(u.getCount() + 1);
 				}
 			}
 		}
 		/**
 		 * Print shortest paths.
 		 */
-		return graph.getParentEdgesAndPrintPath("B-F");
+		return graph.getParentEdgesAndPrintPath("B-FORD");
 	}
 
 	public static void main(String[] args) {
 		BellmanFord obj = new BellmanFord();
 		List<Edge> edges = obj.getShortestPath(Graph.acceptGraphInput(args[0], GraphType.DIRECTED));
-		System.out.println("Shortest path found.");
 	}
 
 }

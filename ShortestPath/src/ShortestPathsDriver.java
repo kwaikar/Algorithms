@@ -31,15 +31,14 @@ public class ShortestPathsDriver {
 					hasUniformEdges = false;
 				}
 				if (!negativeWeights && edge.getWeight() < 0) {
+					System.out.println(vertex  +":"+edge+": "+edge.getWeight());
 					negativeWeights = true;
 				}
 			}
-		 
-			if (TopologicalOrdering.isVertexCyclic(vertex, new HashSet<Vertex>())) {
-				isCyclic = true;
-			}
 		}
-
+		
+		isCyclic = TopologicalOrdering.validate(graph);
+		
 		Statistics stats = new Statistics();
 		stats.timer();
 		List<Edge> edges = null;
