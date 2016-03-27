@@ -128,7 +128,7 @@ public class TopologicalOrdering {
 	 * order.
 	 * 
 	 */
-	public static Stack<Vertex> toplogicalOrder2(Graph g) {
+	public static Stack<Vertex> topologicalOrderUsingDFS(Graph g) {
 		if (!validate(g)) {
 			System.out.println("The Graph is not Acyclic");
 			return null;
@@ -260,7 +260,7 @@ public class TopologicalOrdering {
 		
 		Timer.timer();
 		Timer.timer();
-		Stack<Vertex> topological_order2 = toplogicalOrder2(graphobject);
+		Stack<Vertex> topological_order2 = topologicalOrderUsingDFS(graphobject);
 		System.out.println();
 		
 		
