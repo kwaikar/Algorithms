@@ -32,6 +32,7 @@ public class Vertex implements Comparable<Vertex>, Index {
 	private boolean enabled = true;
 	public Distance distanceObj;
 	public Edge parentEdge;
+	
 
 	/**
 	 * @return the parentEdge
