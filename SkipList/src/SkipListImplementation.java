@@ -166,7 +166,7 @@ public class SkipListImplementation {
 	}
 
 	public static void main(String[] args) {
-		int size = 1000000, del = 100;
+		int size = 1000, del = 100;
 		SkipListImplementation obj = new SkipListImplementation(size);
 
 		/*
