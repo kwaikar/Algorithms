@@ -68,12 +68,10 @@ public class LinkedSortedSetList<T> extends LinkedList<T>implements Iterable<T>,
 	 */
 	private class ListIterator implements Iterator<T> {
 
-		@Override
 		public boolean hasNext() {
 			return itr.hasNext();
 		}
 
-		@Override
 		public T next() {
 			if (itr.hasNext()) {
 				return (T) itr.next();

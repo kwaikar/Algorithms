@@ -166,7 +166,7 @@ public class SkipListImplementation {
 	}
 
 	public static void main(String[] args) {
-		int size = 10000, del = 100;
+		int size = 1000000, del = 100;
 		SkipListImplementation obj = new SkipListImplementation(size);
 
 		/*
@@ -194,23 +194,3 @@ public class SkipListImplementation {
 	}
 
 }
-
-/*
- * Sample Output:
- * 
- * Time taken and memory occupied for inserting 40 nodes into a Skip List 
- * Time: 0 msec. Memory: 2 MB / 128 MB. 
- * Time taken and memory occupied for removing 5 nodes is 
- * Time: 0 msec. Memory: 2 MB / 128 MB.
- * 
- * Time taken and memory occupied for inserting 1000 nodes into a Skip List
- * Time: 5 msec.
- * Memory: 2 MB / 128 MB.
- * Time taken and memory occupied for removing 100 nodes is 
- * Time: 0 msec.
- * Memory: 2 MB / 128 MB.
-
- * 
- * 
- * 
- */

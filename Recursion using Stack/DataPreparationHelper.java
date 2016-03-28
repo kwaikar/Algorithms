@@ -15,7 +15,7 @@ public class DataPreparationHelper {
 	 * @return
 	 */
 	public static List<Integer> prepareRandomIntegeArrayList(int size) {
-		List<Integer> arrayList = new ArrayList<>(size);
+		List<Integer> arrayList = new ArrayList<Integer>(size);
 		for (int j = 0; j < size; j++) {
 			arrayList.add(j, (int) ((Math.random() * 1000000)));
 		}
@@ -53,7 +53,7 @@ public class DataPreparationHelper {
 					/**
 					 * Assume that file contains entire data to be provided as an input to the program to be executed.
 					 */
-					List<Integer> ints = new ArrayList<>();
+					List<Integer> ints = new ArrayList<Integer>();
 					try {
 						in = new Scanner(inputFile);
 						while (in.hasNext()) {
