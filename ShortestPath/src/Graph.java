@@ -281,19 +281,21 @@ class Graph implements Iterable<Vertex> {
 		List<Edge> edges = new LinkedList<Edge>();
 		int total = 0;
 		StringBuilder sb = new StringBuilder();
-		if (this.getVerts().size() <= 1000) {
 			for (Vertex vertex : this) {
 				total += vertex.distanceObj.getDistance();
+
 				sb.append(vertex.getName() + " "
 						+ (vertex.distanceObj.isInfinity() ? "INF" : vertex.distanceObj.getDistance()) + " "
 						+ (vertex.distanceObj.isInfinity() ? "-"
 								: (vertex.getParent() == null ? "-" : vertex.getParent()))
 						+ "\n");
 				edges.add(vertex.getParentEdge());
-			}
 		}
 		System.out.println(typeOfGraph + " " + total);
+
+		if (this.getVerts().size() <= 1000) {
 		System.out.println(sb.toString());
+		}
 		return edges;
 	}
 

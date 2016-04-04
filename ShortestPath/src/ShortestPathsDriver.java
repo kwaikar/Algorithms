@@ -31,7 +31,6 @@ public class ShortestPathsDriver {
 					hasUniformEdges = false;
 				}
 				if (!negativeWeights && edge.getWeight() < 0) {
-					System.out.println(vertex  +":"+edge+": "+edge.getWeight());
 					negativeWeights = true;
 				}
 			}

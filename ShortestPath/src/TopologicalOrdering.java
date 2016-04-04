@@ -129,10 +129,10 @@ public class TopologicalOrdering {
 	 * 
 	 */
 	public static Stack<Vertex> topologicalOrderUsingDFS(Graph g) {
-		if (!validate(g)) {
+		/*if (!validate(g)) {
 			System.out.println("The Graph is not Acyclic");
 			return null;
-		} else {
+		} else {*/
 			List<Vertex> vertices = g.getVerts();
 			Stack<Vertex> stack = new Stack<Vertex>();
 			Set<Vertex> visited = new HashSet<Vertex>();
@@ -144,7 +144,7 @@ public class TopologicalOrdering {
 				topologicalSort(currentVertex, stack, visited);
 			}
 			return stack;
-		}
+		/*}*/
 	}
 
 	/**
@@ -185,7 +185,7 @@ public class TopologicalOrdering {
 		Set<Vertex> path = new HashSet<Vertex>();
 		List<Vertex> vertices = graph.getVerts();
 		for (int i = 1; i < vertices.size(); i++) {
-			if (isCyclic(vertices.get(i), path)) {
+			if (isVertexCyclic(vertices.get(i),"", path)) {
 				return true;
 			}
 		}
@@ -221,21 +221,28 @@ public class TopologicalOrdering {
 		return false;
 	}
 
-	public static boolean isVertexCyclic(Vertex vertex, Set<Vertex> path) {
+	public static boolean isVertexCyclic(Vertex vertex,String tab, Set<Vertex> path) {
+		//System.out.println(tab + vertex);
 		if (path.contains(vertex)) {
-	//		System.out.println("Cycle found " + path);
+			//System.out.println("Cycle found " + path);
 			return true;
 		} else {
-			path.add(vertex);
-			vertex.setSeen(true);
 			List<Edge> edgeList = vertex.getAdj();
-			for (Edge edge : edgeList) {
-				if (isCyclic(edge.getTo(), path)) {
-					return false;
+			if(edgeList!=null && !edgeList.isEmpty())
+			{
+				path.add(vertex);
+				for (Edge edge : edgeList) {
+					if (isVertexCyclic(edge.otherEnd(vertex),tab+"\t", path)) {
+						return true;
+					}
+					else
+					{
+						path.remove(vertex);
+						return false;
+					}
 				}
 			}
 		}
-		path.remove(vertex);
 		return false;
 	}
 

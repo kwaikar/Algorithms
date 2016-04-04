@@ -40,9 +40,7 @@ public class Dijkstra {
 			Vertex current = vertex;
 			for (Edge edge : current.getAdj()) {
 				Vertex v = edge.otherEnd(current);
-				if (vertex.getName() == 30) {
-					System.out.println("Processing " + vertex);
-				}
+		 
 				if (v.isSeen() == false) {
 
 					if (!current.distanceObj.isInfinity()) {
@@ -56,7 +54,6 @@ public class Dijkstra {
 						 * edge.getWeight());
 						 */
 						v.distanceObj.setDistance(current.distanceObj.getDistance() + edge.getWeight());
-						System.out.println(v.distanceObj.getDistance());
 						v.setParent(current);
 						v.setParentEdge(edge);
 						v.setSeen(true);
@@ -68,7 +65,6 @@ public class Dijkstra {
 			}
 		}
 
-		System.out.println(queue);
 		while (!queue.isEmpty()) {
 			Vertex u = (Vertex) queue.remove();
 			u.setSeen();

@@ -5,11 +5,12 @@ import java.util.Queue;
 /**
  * Approach 3 implementation of Bellman ford algorithm
  * 
- * @author Kanchan Waikar Date Created : Mar 27, 2016 - 1:18:07 PM
+ * @author Kanchan Waikar 
+ * 
+ * Date Created : Mar 27, 2016 - 1:18:07 PM
  *
  */
 public class BellmanFord {
-
  
 	public  static  List<Edge> getShortestPath(Graph graph) {
 		/**
@@ -39,8 +40,7 @@ public class BellmanFord {
 				 * vertex has been visited more times than the |V| this means
 				 * the cycle does exist! Break and exit out of the loop
 				 */
-				System.out.println("Graph has negative cycle");
-				//return null;
+				System.out.println("Unable to solve problem; Graph has negative cycle.");
 			}
 			for (Edge edge : u.getAdj()) {
 				Vertex v = edge.otherEnd(u);
