@@ -14,6 +14,7 @@ public class Item {
 	private long id;
 	private Double price;
 	private Long[] sortedDescription;
+	private Integer hashCode = null;
 
 	public Item(long id, Double price, Long[] sortedDescription) {
 		super();
@@ -27,14 +28,6 @@ public class Item {
 	 */
 	public long getId() {
 		return id;
-	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(long id) {
-		this.id = id;
 	}
 
 	/**
@@ -64,8 +57,8 @@ public class Item {
 	 *            the description to set
 	 */
 	public void setDescription(Long[] description) {
-		  Collections.sort(Arrays.asList(description));
-		  
+		Collections.sort(Arrays.asList(description));
+
 	}
 
 	/*
@@ -75,10 +68,15 @@ public class Item {
 	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
-		return result;
+		if (hashCode == null) {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + (int) (id ^ (id >>> 32));
+			hashCode = result;
+			return result;
+		} else {
+			return hashCode;
+		}
 	}
 
 	/*

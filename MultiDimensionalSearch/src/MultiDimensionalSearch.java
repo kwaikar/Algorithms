@@ -20,9 +20,9 @@ public class MultiDimensionalSearch {
 
 	private final Set EMPTY_SET = new HashSet();
 
-	Map<DescriptionKey, Set<Item>> mapForSameSame = new TreeMap<DescriptionKey, Set<Item>>();
+	Map<DescriptionKey, Set<Item>> mapForSameSame = new HashMap<DescriptionKey, Set<Item>>();
 	Map<Long, TreeSet<Item>> mapOfDescriptionSubStringAndPrice = new TreeMap<Long, TreeSet<Item>>();
-	Map<Long, Item> mapById = new HashMap<Long, Item>();
+	TreeMap<Long, Item> mapById = new TreeMap<Long, Item>();
 
 	int insert(Long id, double price, Long[] description, int size) {
 
@@ -167,8 +167,15 @@ public class MultiDimensionalSearch {
 	}
 
 	double priceHike(long minid, long maxid, double rate) {
-
-		return 0;
+		double netIncrease =0;
+		Map<Long, Item> items = mapById.subMap(minid, maxid);
+		for (Item item : items.values()) {
+			double newPrice =item.getPrice()*((double)1+(rate/100));
+			double diff=newPrice-item.getPrice();
+			item.setPrice(diff);
+			netIncrease+=diff;
+		}
+		return netIncrease;
 	}
 
 	int range(double lowPrice, double highPrice) {
@@ -177,18 +184,19 @@ public class MultiDimensionalSearch {
 
 	/**
 	 * 
-	 * SameSame(): Find the number of items that satisfy all of the following conditions: The description of the item contains 8 or more numbers, and,
-	 *	The description of the item contains exactly the same set of numbers as another item. 
-	 * Creative solutions that are elegant and efficient will be awarded excellence credit. 
+	 * SameSame(): Find the number of items that satisfy all of the following
+	 * conditions: The description of the item contains 8 or more numbers, and,
+	 * The description of the item contains exactly the same set of numbers as
+	 * another item.
+	 * 
 	 * @return - number of items that satisfy both conditions.
 	 */
 	int samesame() {
-		int counter=0;
+		int counter = 0;
 		for (Map.Entry<DescriptionKey, Set<Item>> entry : mapForSameSame.entrySet()) {
-			int size =entry.getValue().size();
-			if(size>1)
-			{
-				counter+=size;
+			int size = entry.getValue().size();
+			if (size > 1) {
+				counter += size;
 			}
 		}
 		return counter;
