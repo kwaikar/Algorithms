@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry.Entry;
+
 /**
  * This class implements Multi-dimensional Search
  * 
@@ -18,22 +20,19 @@ public class MultiDimensionalSearch {
 
 	private final Set EMPTY_SET = new HashSet();
 
+	Map<DescriptionKey, Set<Item>> mapForSameSame = new TreeMap<DescriptionKey, Set<Item>>();
 	Map<Long, TreeSet<Item>> mapOfDescriptionSubStringAndPrice = new TreeMap<Long, TreeSet<Item>>();
 	Map<Long, Item> mapById = new HashMap<Long, Item>();
 
 	int insert(Long id, double price, Long[] description, int size) {
-		// Description of item is in description[0..size-1].
-		// Copy them into your data structure.
+
 		Item item = mapById.get(id);
 		boolean isNew = false;
-
-		Long[] oldDescription = null;
-
 		if (item == null) {
 			item = new Item(id, price, description);
 			isNew = true;
 		} else {
-			oldDescription = item.getDescription();
+			delete(id);
 			if (description.length == 0) {
 				description = item.getDescription();
 				item.setPrice(price);
@@ -42,36 +41,49 @@ public class MultiDimensionalSearch {
 				item.setPrice(price);
 			}
 		}
+		/**
+		 * id field does not change hence need not be revisited.
+		 */
 		mapById.put(item.getId(), item);
+
+		if (description.length > 8) {
+			DescriptionKey key = new DescriptionKey(description);
+			Set<Item> commonItems = mapForSameSame.get(key);
+			if (commonItems == null) {
+				commonItems = new HashSet<Item>();
+			}
+			commonItems.add(item);
+			mapForSameSame.put(key, commonItems);
+		}
 
 		for (long subString : description) {
 			TreeSet<Item> treeSet = mapOfDescriptionSubStringAndPrice.get(description[0]);
 			if (treeSet == null) {
-				treeSet = new TreeSet<>(new Comparator<Item>() {
-					@Override
-					public int compare(Item o1, Item o2) {
-						return o1.getPrice().compareTo(o2.getPrice());
-					}
-				});
+				treeSet = priceBasedEmptyTreeSet();
 			}
 			treeSet.add(item);
 			mapOfDescriptionSubStringAndPrice.put(subString, treeSet);
 		}
-		if(oldDescription!=null)
-		{
-			for (long subString : description) {
-				TreeSet<Item> treeSet = mapOfDescriptionSubStringAndPrice.get(subString);
-				if (treeSet != null) {
-					 treeSet.remove(item);
-				}
-			}	
-		}
-		 
+
 		if (isNew) {
 			return 1;
 		} else {
 			return 0;
 		}
+	}
+
+	/**
+	 * This method returns a price comparator based empty Treeset
+	 * 
+	 * @return
+	 */
+	private TreeSet<Item> priceBasedEmptyTreeSet() {
+		return new TreeSet<>(new Comparator<Item>() {
+			@Override
+			public int compare(Item o1, Item o2) {
+				return o1.getPrice().compareTo(o2.getPrice());
+			}
+		});
 	}
 
 	double find(long id) {
@@ -83,9 +95,29 @@ public class MultiDimensionalSearch {
 		}
 	}
 
+	/**
+	 * This method removes Item from indexes by ID.
+	 * 
+	 * @param id
+	 * @return
+	 */
 	long delete(long id) {
-		Item item = mapById.get(id);
+		Item item = mapById.remove(id);
+		if ((item.getDescription().length > 0)) {
+			DescriptionKey descKey = new DescriptionKey(item.getDescription());
+			Set<Item> hashSet = mapForSameSame.get(descKey);
+			hashSet.remove(item);
+			mapForSameSame.put(descKey, hashSet);
+		}
+		removeFromMapByDesc(id, item);
+		return 0;
+	}
 
+	/**
+	 * @param id
+	 * @param item
+	 */
+	private void removeFromMapByDesc(long id, Item item) {
 		for (long subString : item.getDescription()) {
 			TreeSet<Item> set = mapOfDescriptionSubStringAndPrice.get(subString);
 			Item itemTobeDeleted = null;
@@ -96,8 +128,6 @@ public class MultiDimensionalSearch {
 			}
 			set.remove(itemTobeDeleted);
 		}
-
-		return 0;
 	}
 
 	double findMinPrice(long des) {
@@ -145,8 +175,23 @@ public class MultiDimensionalSearch {
 		return 0;
 	}
 
+	/**
+	 * 
+	 * SameSame(): Find the number of items that satisfy all of the following conditions: The description of the item contains 8 or more numbers, and,
+	 *	The description of the item contains exactly the same set of numbers as another item. 
+	 * Creative solutions that are elegant and efficient will be awarded excellence credit. 
+	 * @return - number of items that satisfy both conditions.
+	 */
 	int samesame() {
-		return 0;
+		int counter=0;
+		for (Map.Entry<DescriptionKey, Set<Item>> entry : mapForSameSame.entrySet()) {
+			int size =entry.getValue().size();
+			if(size>1)
+			{
+				counter+=size;
+			}
+		}
+		return counter;
 	}
 
 	public static void main(String[] args) {
