@@ -181,6 +181,7 @@ public class MultiDimensionalSearch {
 
 	/**
 	 * hikes price of all elements in the given range of ids.
+	 * 
 	 * @param minid
 	 * @param maxid
 	 * @param rate
@@ -188,7 +189,7 @@ public class MultiDimensionalSearch {
 	 */
 	double priceHike(long minid, long maxid, double rate) {
 		double netIncrease = 0;
-		Map<Long, Item> items = mapById.subMap(minid,true ,maxid,true);
+		Map<Long, Item> items = mapById.subMap(minid, true, maxid, true);
 		for (Item item : items.values()) {
 
 			/**
@@ -212,12 +213,13 @@ public class MultiDimensionalSearch {
 
 	/**
 	 * This method returns number of elements present in the map range selected
+	 * 
 	 * @param lowPrice
 	 * @param highPrice
 	 * @return
 	 */
 	int range(double lowPrice, double highPrice) {
-		return mapByPriceAndItem.subMap(lowPrice,true, highPrice,true).values().size();
+		return mapByPriceAndItem.subMap(lowPrice, true, highPrice, true).values().size();
 	}
 
 	/**
