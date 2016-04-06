@@ -20,13 +20,22 @@ public class MultiDimensionalSearch {
 
 	/**
 	 * mapForSameSame is a dedicated map created for samesame function and only
+	 * Structure <Item.desc.substring, Treeset<Item>>
 	 */
 	Map<DescriptionKey, Set<Item>> mapForSameSame = new HashMap<DescriptionKey, Set<Item>>();
 
 	/**
 	 * description sub-part based look-up
 	 */
-	Map<Long, TreeSet<Item>> mapOfDescriptionSubStringAndPrice = new TreeMap<Long, TreeSet<Item>>();
+	Map<Long,  Set<Item>> mapOfDescriptionSubStringAndPrice = new TreeMap<Long,  Set<Item>>();
+	
+
+	/**
+	 * price based lookup - item reference is stored inside treeset
+	 * Structure <Item.price, Treeset<Item>>
+	 */
+	Map<Double,  Set<Item>> mapByPriceAndItem= new TreeMap<Double,  Set<Item>>();
+	
 	/**
 	 * Id based map - can be used for look-up, CRUD on id
 	 */
@@ -64,8 +73,8 @@ public class MultiDimensionalSearch {
 			mapForSameSame.put(key, commonItems);
 		}
 
-		for (long subString : description) {
-			putItemInTreeSetOfItemsMap(mapOfDescriptionSubStringAndPrice, subString, item);
+		for (Long subString : description) {
+			putItemInTreeSetOfItemsMap(mapOfDescriptionSubStringAndPrice, subString, item,priceBasedEmptyTreeSet());
 		}
 
 		if (isNew) {
@@ -83,11 +92,11 @@ public class MultiDimensionalSearch {
 	 * @param mapOfTreeSetOfItems
 	 * @param outerKey
 	 */
-	private void putItemInTreeSetOfItemsMap(Map<Long, TreeSet<Item>> mapOfTreeSetOfItems, Long outerKey,
-			Item itemToBePut) {
-		TreeSet<Item> treeSet = mapOfTreeSetOfItems.get(outerKey);
+	private static <T>  void putItemInTreeSetOfItemsMap(Map<T,  Set<Item>> mapOfTreeSetOfItems, T outerKey,
+			Item itemToBePut,Set<Item> emptyHashSet) {
+		 Set<Item> treeSet = mapOfTreeSetOfItems.get(outerKey);
 		if (treeSet == null) {
-			treeSet = priceBasedEmptyTreeSet();
+			treeSet = emptyHashSet;
 		}
 		treeSet.add(itemToBePut);
 		mapOfTreeSetOfItems.put(outerKey, treeSet);
@@ -98,7 +107,7 @@ public class MultiDimensionalSearch {
 	 * 
 	 * @return
 	 */
-	private TreeSet<Item> priceBasedEmptyTreeSet() {
+	private  Set<Item> priceBasedEmptyTreeSet() {
 		return new TreeSet<>(new Comparator<Item>() {
 			@Override
 			public int compare(Item o1, Item o2) {
@@ -136,29 +145,24 @@ public class MultiDimensionalSearch {
 			hashSet.remove(item);
 			mapForSameSame.put(descKey, hashSet);
 		}
-		removeFromMapByDesc(id, item);
+		for (long subDescriptionKey : item.getDescription()) {
+			removeFromItemBasedTreeset(mapOfDescriptionSubStringAndPrice, subDescriptionKey, id);
+		}
+		
 		return 0;
 	}
-
-	/**
-	 * @param id
-	 * @param item
-	 */
-	private void removeFromMapByDesc(long id, Item item) {
-		for (long subDescriptionKey: item.getDescription()) {
-			removeFromItemBasedTreeset(mapOfDescriptionSubStringAndPrice, id, subDescriptionKey);
-		}
-	}
+ 
 
 	/**
 	 * This method removes the entry by iner id
-	 * @param mapOfDescAndPrice
+	 * 
+	 * @param mapOfItemBasedTreeSet
 	 * @param innerKeyToBeRemoved
 	 * @param outerKey
 	 */
-	private void removeFromItemBasedTreeset(Map<Long, TreeSet<Item>> mapOfDescAndPrice, long innerKeyToBeRemoved,
-			long outerKey) {
-		TreeSet<Item> set = mapOfDescAndPrice.get(outerKey);
+	private <T>  void removeFromItemBasedTreeset(Map<T,  Set<Item>> mapOfItemBasedTreeSet, T outerKey,
+			long innerKeyToBeRemoved) {
+		 Set<Item> set = mapOfItemBasedTreeSet.get(outerKey);
 		Item itemTobeDeleted = null;
 		for (Item item2 : set) {
 			if (item2.getId() == innerKeyToBeRemoved) {
@@ -166,11 +170,11 @@ public class MultiDimensionalSearch {
 			}
 		}
 		set.remove(itemTobeDeleted);
-		mapOfDescAndPrice.put(outerKey, set);
+		mapOfItemBasedTreeSet.put(outerKey, set);
 	}
 
 	double findMinPrice(long des) {
-		TreeSet<Item> set = mapOfDescriptionSubStringAndPrice.get(des);
+		TreeSet<Item> set =(TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
 		if (set != null && set.size() != 0) {
 			set.first().getPrice();
 		}
@@ -178,7 +182,7 @@ public class MultiDimensionalSearch {
 	}
 
 	double findMaxPrice(long des) {
-		TreeSet<Item> set = mapOfDescriptionSubStringAndPrice.get(des);
+		TreeSet<Item> set =(TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
 		if (set != null && set.size() != 0) {
 
 			set.last().getPrice();
@@ -196,7 +200,7 @@ public class MultiDimensionalSearch {
 	 * @param highPrice
 	 */
 	private Set<Item> extractSubSetForDescription(long des, double lowPrice, double highPrice) {
-		TreeSet<Item> set = mapOfDescriptionSubStringAndPrice.get(des);
+		TreeSet<Item> set = (TreeSet<Item>)mapOfDescriptionSubStringAndPrice.get(des);
 		if (set != null && set.size() != 0) {
 			Item lowItem = new Item(-1L, lowPrice, null);
 			Item highItem = new Item(-1L, highPrice, null);
