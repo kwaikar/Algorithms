@@ -1,5 +1,7 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -12,15 +14,15 @@ import java.util.List;
  */
 public class Item {
 	private long id;
-	private Double price;
-	private Long[] sortedDescription;
+	private double price;
+	private Long[] sortedDescription=new Long[0];
 	private Integer hashCode = null;
 
-	public Item(long id, Double price, Long[] sortedDescription) {
+	public Item(long id, Double price, long[] sortedDescription) {
 		super();
 		this.id = id;
 		this.price = price;
-		this.sortedDescription = sortedDescription;
+		this.setDescription(sortedDescription);
 	}
 
 	/**
@@ -56,9 +58,16 @@ public class Item {
 	 * @param description
 	 *            the description to set
 	 */
-	public void setDescription(Long[] description) {
-		Collections.sort(Arrays.asList(description));
-
+	public void setDescription(long[] description) {
+		List<Long> temp = new ArrayList<Long>();
+		for (Long long1 : description) {
+			if (long1 != null) {
+				temp.add(long1);
+			}
+		}
+		Collections.sort(temp);
+		System.out.println("seting" + temp);
+		sortedDescription = temp.toArray(sortedDescription);
 	}
 
 	/*

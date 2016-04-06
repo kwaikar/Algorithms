@@ -9,7 +9,7 @@ import java.io.*;
  * @author rbk
  */
 public class MultiDimensionalSearchDriver {
-	static Long[] description;
+	static long[] description;
 	static final int DLENGTH = 100000;
 
 	public static void main(String[] args) throws FileNotFoundException {
@@ -21,7 +21,7 @@ public class MultiDimensionalSearchDriver {
 		}
 		String s;
 		double rv = 0;
-		description = new Long[DLENGTH];
+		description = new long[DLENGTH];
 
 		Timer timer = new Timer();
 		MultiDimensionalSearch mds = new MultiDimensionalSearch();
@@ -42,7 +42,9 @@ public class MultiDimensionalSearchDriver {
 					des = in.nextInt();
 				}
 				description[index] = 0L;
-				rv += mds.insert(id, price, description, index);
+				if (index != 0) {
+					rv += mds.insert(id, price, Arrays.copyOfRange(description, 0, index), index);
+				}
 			} else if (s.equals("Find")) {
 				long id = in.nextLong();
 				rv += mds.find(id);
@@ -78,7 +80,7 @@ public class MultiDimensionalSearchDriver {
 				System.exit(0);
 			}
 		}
-		System.out.println(rv);
-		//System.out.println(timer.end());
+		System.out.println("=====>" + rv);
+		// System.out.println(timer.end());
 	}
 }
