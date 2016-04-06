@@ -16,7 +16,7 @@ import java.util.TreeSet;
  */
 public class MultiDimensionalSearch {
 
-	private final Set EMPTY_SET = new HashSet();
+	private Set<Item> EMPTY_SET = new HashSet<Item>();
 
 	/**
 	 * mapForSameSame is a dedicated map created for samesame function and only
@@ -27,20 +27,28 @@ public class MultiDimensionalSearch {
 	/**
 	 * description sub-part based look-up
 	 */
-	Map<Long,  Set<Item>> mapOfDescriptionSubStringAndPrice = new TreeMap<Long,  Set<Item>>();
-	
+	Map<Long, Set<Item>> mapOfDescriptionSubStringAndPrice = new TreeMap<Long, Set<Item>>();
 
 	/**
-	 * price based lookup - item reference is stored inside treeset
-	 * Structure <Item.price, Treeset<Item>>
+	 * price based lookup - item reference is stored inside treeset Structure
+	 * <Item.price, Treeset<Item>>
 	 */
-	Map<Double,  Set<Item>> mapByPriceAndItem= new TreeMap<Double,  Set<Item>>();
-	
+	TreeMap<Double, Set<Item>> mapByPriceAndItem = new TreeMap<Double, Set<Item>>();
+
 	/**
 	 * Id based map - can be used for look-up, CRUD on id
 	 */
 	TreeMap<Long, Item> mapById = new TreeMap<Long, Item>();
 
+	/**
+	 * Inserts an item into all indexes.
+	 * 
+	 * @param id
+	 * @param price
+	 * @param description
+	 * @param size
+	 * @return
+	 */
 	int insert(Long id, double price, Long[] description, int size) {
 
 		Item item = mapById.get(id);
@@ -74,8 +82,9 @@ public class MultiDimensionalSearch {
 		}
 
 		for (Long subString : description) {
-			putItemInTreeSetOfItemsMap(mapOfDescriptionSubStringAndPrice, subString, item,priceBasedEmptyTreeSet());
+			putItemInTreeSetOfItemsMap(mapOfDescriptionSubStringAndPrice, subString, item, priceBasedEmptyTreeSet());
 		}
+		putItemInTreeSetOfItemsMap(mapByPriceAndItem, item.getPrice(), item, EMPTY_SET);
 
 		if (isNew) {
 			return 1;
@@ -85,29 +94,11 @@ public class MultiDimensionalSearch {
 	}
 
 	/**
-	 * This method iterates through the map and puts the item inside the inner
-	 * treeset.
-	 * 
-	 * @param itemToBePut
-	 * @param mapOfTreeSetOfItems
-	 * @param outerKey
-	 */
-	private static <T>  void putItemInTreeSetOfItemsMap(Map<T,  Set<Item>> mapOfTreeSetOfItems, T outerKey,
-			Item itemToBePut,Set<Item> emptyHashSet) {
-		 Set<Item> treeSet = mapOfTreeSetOfItems.get(outerKey);
-		if (treeSet == null) {
-			treeSet = emptyHashSet;
-		}
-		treeSet.add(itemToBePut);
-		mapOfTreeSetOfItems.put(outerKey, treeSet);
-	}
-
-	/**
 	 * This method returns a price comparator based empty Treeset
 	 * 
 	 * @return
 	 */
-	private  Set<Item> priceBasedEmptyTreeSet() {
+	private Set<Item> priceBasedEmptyTreeSet() {
 		return new TreeSet<>(new Comparator<Item>() {
 			@Override
 			public int compare(Item o1, Item o2) {
@@ -148,33 +139,12 @@ public class MultiDimensionalSearch {
 		for (long subDescriptionKey : item.getDescription()) {
 			removeFromItemBasedTreeset(mapOfDescriptionSubStringAndPrice, subDescriptionKey, id);
 		}
-		
+		removeFromItemBasedTreeset(mapByPriceAndItem, item.getPrice(), id);
 		return 0;
-	}
- 
-
-	/**
-	 * This method removes the entry by iner id
-	 * 
-	 * @param mapOfItemBasedTreeSet
-	 * @param innerKeyToBeRemoved
-	 * @param outerKey
-	 */
-	private <T>  void removeFromItemBasedTreeset(Map<T,  Set<Item>> mapOfItemBasedTreeSet, T outerKey,
-			long innerKeyToBeRemoved) {
-		 Set<Item> set = mapOfItemBasedTreeSet.get(outerKey);
-		Item itemTobeDeleted = null;
-		for (Item item2 : set) {
-			if (item2.getId() == innerKeyToBeRemoved) {
-				itemTobeDeleted = item2;
-			}
-		}
-		set.remove(itemTobeDeleted);
-		mapOfItemBasedTreeSet.put(outerKey, set);
 	}
 
 	double findMinPrice(long des) {
-		TreeSet<Item> set =(TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
+		TreeSet<Item> set = (TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
 		if (set != null && set.size() != 0) {
 			set.first().getPrice();
 		}
@@ -182,7 +152,7 @@ public class MultiDimensionalSearch {
 	}
 
 	double findMaxPrice(long des) {
-		TreeSet<Item> set =(TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
+		TreeSet<Item> set = (TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
 		if (set != null && set.size() != 0) {
 
 			set.last().getPrice();
@@ -200,7 +170,7 @@ public class MultiDimensionalSearch {
 	 * @param highPrice
 	 */
 	private Set<Item> extractSubSetForDescription(long des, double lowPrice, double highPrice) {
-		TreeSet<Item> set = (TreeSet<Item>)mapOfDescriptionSubStringAndPrice.get(des);
+		TreeSet<Item> set = (TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
 		if (set != null && set.size() != 0) {
 			Item lowItem = new Item(-1L, lowPrice, null);
 			Item highItem = new Item(-1L, highPrice, null);
@@ -209,20 +179,45 @@ public class MultiDimensionalSearch {
 		return EMPTY_SET;
 	}
 
+	/**
+	 * hikes price of all elements in the given range of ids.
+	 * @param minid
+	 * @param maxid
+	 * @param rate
+	 * @return
+	 */
 	double priceHike(long minid, long maxid, double rate) {
 		double netIncrease = 0;
-		Map<Long, Item> items = mapById.subMap(minid, maxid);
+		Map<Long, Item> items = mapById.subMap(minid,true ,maxid,true);
 		for (Item item : items.values()) {
+
+			/**
+			 * remove entry from price index
+			 */
+			removeFromItemBasedTreeset(mapByPriceAndItem, item.getPrice(), item.getId());
 			double newPrice = item.getPrice() * ((double) 1 + (rate / 100));
 			double diff = newPrice - item.getPrice();
 			item.setPrice(diff);
+			/**
+			 * calculate net difference between new and old price.
+			 */
 			netIncrease += diff;
+			/**
+			 * put entry into price index
+			 */
+			putItemInTreeSetOfItemsMap(mapByPriceAndItem, item.getPrice(), item, EMPTY_SET);
 		}
 		return netIncrease;
 	}
 
+	/**
+	 * This method returns number of elements present in the map range selected
+	 * @param lowPrice
+	 * @param highPrice
+	 * @return
+	 */
 	int range(double lowPrice, double highPrice) {
-		return 0;
+		return mapByPriceAndItem.subMap(lowPrice,true, highPrice,true).values().size();
 	}
 
 	/**
@@ -251,4 +246,43 @@ public class MultiDimensionalSearch {
 
 		stats.timer("Time Taken");
 	}
+
+	/**
+	 * This method iterates through the map and puts the item inside the inner
+	 * treeset.
+	 * 
+	 * @param itemToBePut
+	 * @param mapOfTreeSetOfItems
+	 * @param outerKey
+	 */
+	private static <T> void putItemInTreeSetOfItemsMap(Map<T, Set<Item>> mapOfTreeSetOfItems, T outerKey,
+			Item itemToBePut, Set<Item> emptyHashSet) {
+		Set<Item> treeSet = mapOfTreeSetOfItems.get(outerKey);
+		if (treeSet == null) {
+			treeSet = emptyHashSet;
+		}
+		treeSet.add(itemToBePut);
+		mapOfTreeSetOfItems.put(outerKey, treeSet);
+	}
+
+	/**
+	 * This method removes the entry by iner id
+	 * 
+	 * @param mapOfItemBasedTreeSet
+	 * @param innerKeyToBeRemoved
+	 * @param outerKey
+	 */
+	private <T> void removeFromItemBasedTreeset(Map<T, Set<Item>> mapOfItemBasedTreeSet, T outerKey,
+			long innerKeyToBeRemoved) {
+		Set<Item> set = mapOfItemBasedTreeSet.get(outerKey);
+		Item itemTobeDeleted = null;
+		for (Item item2 : set) {
+			if (item2.getId() == innerKeyToBeRemoved) {
+				itemTobeDeleted = item2;
+			}
+		}
+		set.remove(itemTobeDeleted);
+		mapOfItemBasedTreeSet.put(outerKey, set);
+	}
+
 }
