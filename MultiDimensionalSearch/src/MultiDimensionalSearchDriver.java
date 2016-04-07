@@ -32,7 +32,9 @@ public class MultiDimensionalSearchDriver {
 				s = in.nextLine();
 				continue;
 			}
+			System.out.println("|" + s + "|");
 			if (s.equals("Insert")) {
+
 				long id = in.nextLong();
 				double price = in.nextDouble();
 				long des = in.nextLong();
@@ -41,38 +43,37 @@ public class MultiDimensionalSearchDriver {
 					description[index++] = des;
 					des = in.nextInt();
 				}
-				description[index] = 0L;
-				if (index != 0) {
-					rv += mds.insert(id, price, Arrays.copyOfRange(description, 0, index), index);
-				}
+				description[index] = 0;
+				rv += printAndReturVal(mds.insert(id, price, Arrays.copyOfRange(description, 0, index), index));
+
 			} else if (s.equals("Find")) {
 				long id = in.nextLong();
-				rv += mds.find(id);
+				rv += printAndReturVal(mds.find(id));
 			} else if (s.equals("Delete")) {
 				long id = in.nextLong();
-				rv += mds.delete(id);
+				rv += printAndReturVal(mds.delete(id));
 			} else if (s.equals("FindMinPrice")) {
 				long des = in.nextLong();
-				rv += mds.findMinPrice(des);
+				rv += printAndReturVal(mds.findMinPrice(des));
 			} else if (s.equals("FindMaxPrice")) {
 				long des = in.nextLong();
-				rv += mds.findMaxPrice(des);
+				rv += printAndReturVal(mds.findMaxPrice(des));
 			} else if (s.equals("FindPriceRange")) {
 				long des = in.nextLong();
 				double lowPrice = in.nextDouble();
 				double highPrice = in.nextDouble();
-				rv += mds.findPriceRange(des, lowPrice, highPrice);
+				rv += printAndReturVal(mds.findPriceRange(des, lowPrice, highPrice));
 			} else if (s.equals("PriceHike")) {
 				long minid = in.nextLong();
 				long maxid = in.nextLong();
 				double rate = in.nextDouble();
-				rv += mds.priceHike(minid, maxid, rate);
+				rv += printAndReturVal(mds.priceHike(minid, maxid, rate));
 			} else if (s.equals("Range")) {
 				double lowPrice = in.nextDouble();
 				double highPrice = in.nextDouble();
-				rv += mds.range(lowPrice, highPrice);
+				rv += printAndReturVal(mds.range(lowPrice, highPrice));
 			} else if (s.equals("SameSame")) {
-				rv += mds.samesame();
+				rv += printAndReturVal(mds.samesame());
 			} else if (s.equals("End")) {
 				break;
 			} else {
@@ -82,5 +83,10 @@ public class MultiDimensionalSearchDriver {
 		}
 		System.out.println("=====>" + rv);
 		// System.out.println(timer.end());
+	}
+
+	private static double printAndReturVal(double value) {
+		System.out.println("->" + value);
+		return value;
 	}
 }

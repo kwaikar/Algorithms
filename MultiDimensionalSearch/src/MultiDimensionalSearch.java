@@ -80,9 +80,7 @@ public class MultiDimensionalSearch {
 				commonItems.add(item);
 				mapForSameSame.put(key, commonItems);
 			}
-			System.out.println("|" + item.getDescription() + "|");
 			for (Long subString : item.getDescription()) {
-				System.out.println("inserting for" + subString + "L" + item);
 				putItemInTreeSetOfItemsMap(mapOfDescriptionSubStringAndPrice, subString, item,
 						priceBasedEmptyTreeSet());
 			}
@@ -134,10 +132,10 @@ public class MultiDimensionalSearch {
 	 * @return
 	 */
 	long delete(long id) {
-		long counter=0;
+		long counter = 0;
 		Item item = mapById.remove(id);
-		for (Long descriptionSubSequence: item.getDescription()) {
-			counter+=descriptionSubSequence;
+		for (Long descriptionSubSequence : item.getDescription()) {
+			counter += descriptionSubSequence;
 		}
 		if ((item.getDescription().length > 0)) {
 			DescriptionKey descKey = new DescriptionKey(item.getDescription());
@@ -151,14 +149,13 @@ public class MultiDimensionalSearch {
 			removeFromItemBasedTreeset(mapOfDescriptionSubStringAndPrice, subDescriptionKey, id);
 		}
 		removeFromItemBasedTreeset(mapByPriceAndItem, item.getPrice(), id);
-		System.out.println("Delete: "+counter);
 		return counter;
 	}
 
 	double findMinPrice(long des) {
 		TreeSet<Item> set = (TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
 		if (set != null && set.size() != 0) {
-return 			set.first().getPrice();
+			return set.first().getPrice();
 		}
 		return Double.MIN_VALUE;
 	}
@@ -187,8 +184,8 @@ return 			set.first().getPrice();
 		if (set != null && set.size() != 0) {
 			Item lowItem = new Item(-1L, lowPrice, null);
 			Item highItem = new Item(-1L, highPrice, null);
-			Set<Item> subSet= set.subSet(lowItem, true, highItem, true);
-			System.out.println("Size found: "+subSet.size());
+			Set<Item> subSet = set.subSet(lowItem, true, highItem, true);
+			System.out.println("Size found: " + subSet.size());
 			return subSet;
 		}
 		return EMPTY_SET;
@@ -211,11 +208,12 @@ return 			set.first().getPrice();
 			 * remove entry from price index
 			 */
 			removeFromItemBasedTreeset(mapByPriceAndItem, item.getPrice(), item.getId());
-			
-			double newPrice = item.getPrice() * ((double) 1 + ((double)rate / 100));
+
+			double newPrice = item.getPrice() * ((double) 1 + ((double) rate / 100));
 			newPrice = truncateToTwoDecimalPlaces(newPrice);
 			double diff = truncateToTwoDecimalPlaces(newPrice - item.getPrice());
-			System.out.println("=="+diff+"||"+newPrice+"--"+item.getPrice()+"-"+( newPrice - item.getPrice()));
+			System.out.println(
+					"==" + diff + "||" + newPrice + "--" + item.getPrice() + "-" + (newPrice - item.getPrice()));
 			item.setPrice(newPrice);
 			/**
 			 * calculate net difference between new and old price.
@@ -232,16 +230,18 @@ return 			set.first().getPrice();
 
 	/**
 	 * This method truncates input number.
-	 * @param num - number to be truncated
+	 * 
+	 * @param num
+	 *            - number to be truncated
 	 * @return
 	 */
 	private double truncateToTwoDecimalPlaces(double num) {
-		
-	num=	Math.round(num*1000);
-	num=num/1000;
-		num=num*100;
-		num= (int)num;
-		num = num/100;
+
+		num = Math.round(num * 1000);
+		num = num / 1000;
+		num = num * 100;
+		num = (int) num;
+		num = num / 100;
 		return num;
 	}
 
