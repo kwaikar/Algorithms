@@ -136,6 +136,8 @@ public class MultiDimensionalSearch {
 	}
 
 	/**
+	 * updates mapForSameSame with given item.
+	 * 
 	 * @param item
 	 */
 	public void updateSameSameMap(Item item) {
@@ -159,13 +161,11 @@ public class MultiDimensionalSearch {
 		return new TreeSet<>(new Comparator<Item>() {
 			@Override
 			public int compare(Item o1, Item o2) {
-				// System.out.println(o1+":"+o2);
-				int temp= (o1.getPrice()).compareTo(o2.getPrice());
-				if(temp==0)
-				{
-					temp =o1.getId().compareTo(o2.getId());
+				int temp = (o1.getPrice()).compareTo(o2.getPrice());
+				if (temp == 0) {
+					temp = o1.getId().compareTo(o2.getId());
 				}
-				 
+
 				return temp;
 			}
 		});
@@ -207,6 +207,8 @@ public class MultiDimensionalSearch {
 	}
 
 	/**
+	 * Cleans up item from mapForSameSame
+	 * 
 	 * @param item
 	 */
 	public void cleanupSameSameMapForItem(Item item) {
@@ -222,6 +224,12 @@ public class MultiDimensionalSearch {
 		}
 	}
 
+	/**
+	 * returns minimum item containing des substring
+	 * 
+	 * @param des
+	 * @return
+	 */
 	double findMinPrice(long des) {
 		TreeSet<Item> set = (TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
 		if (set != null && set.size() != 0) {
@@ -230,6 +238,12 @@ public class MultiDimensionalSearch {
 		return Double.MIN_VALUE;
 	}
 
+	/**
+	 * Finds max price of item containing des substring
+	 * 
+	 * @param des
+	 * @return
+	 */
 	double findMaxPrice(long des) {
 		TreeSet<Item> set = (TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
 		if (set != null && set.size() != 0) {
@@ -238,6 +252,15 @@ public class MultiDimensionalSearch {
 		return Double.MIN_VALUE;
 	}
 
+	/**
+	 * Returns price within the range and only includes entries with des
+	 * substring in description
+	 * 
+	 * @param des
+	 * @param lowPrice
+	 * @param highPrice
+	 * @return
+	 */
 	int findPriceRange(long des, double lowPrice, double highPrice) {
 		Set<Item> set = extractSubSetForDescription(des, lowPrice, highPrice);
 		if (set == null) {
@@ -258,10 +281,9 @@ public class MultiDimensionalSearch {
 			/**
 			 * Adding buffer for inclusivity.
 			 */
-			Item lowItem = new Item(1L, lowPrice-0.00000000001, null);
-			Item highItem = new Item(1L, highPrice+0.00000000001, null);
-			Set<Item> subSet = set.subSet(lowItem, true, highItem, true);
-			return subSet;
+			Item lowItem = new Item(1L, lowPrice - 0.00000000001, null);
+			Item highItem = new Item(1L, highPrice + 0.00000000001, null);
+			return set.subSet(lowItem, true, highItem, true);
 		}
 		return EMPTY_SET;
 	}
@@ -276,8 +298,7 @@ public class MultiDimensionalSearch {
 	 */
 	double priceHike(long minid, long maxid, double rate) {
 		double netIncrease = 0;
-		Map<Long, Item> items = mapById.subMap(minid, true, maxid, true);
-		for (Item item : items.values()) {
+		for (Item item : mapById.subMap(minid, true, maxid, true).values()) {
 
 			/**
 			 * remove entry from price index
@@ -286,8 +307,7 @@ public class MultiDimensionalSearch {
 			for (long subDescriptionKey : item.getDescription()) {
 				removeFromItemBasedTreeset(mapOfDescriptionSubStringAndPrice, subDescriptionKey, item);
 			}
-			
-			
+
 			double newPrice = item.getPrice() * ((double) 1 + ((double) rate / 100));
 			newPrice = truncateToTwoDecimalPlaces(newPrice);
 
@@ -353,24 +373,15 @@ public class MultiDimensionalSearch {
 	int samesame() {
 		// System.out.println(mapForSameSame);
 		int counter = 0;
-		for (Map.Entry<DescriptionKey, Set<Item>> entry : mapForSameSame.entrySet()) {
-			int size = entry.getValue().size();
-			// System.out.println(size);
+		for (Set<Item> value : mapForSameSame.values()) {
+			int size = value.size();
 			if (size > 1) {
 				counter += size;
 			}
 		}
-		// System.out.println("Counter" + counter);
 		return counter;
 	}
-
-	public static void main(String[] args) {
-		Statistics stats = new Statistics();
-		stats.timer();
-
-		stats.timer("Time Taken");
-	}
-
+ F
 	/**
 	 * This method iterates through the map and puts the item inside the inner
 	 * treeset.
@@ -398,13 +409,7 @@ public class MultiDimensionalSearch {
 	 */
 	private <T> void removeFromItemBasedTreeset(Map<T, Set<Item>> mapOfItemBasedTreeSet, T outerKey,
 			Item innerKeyToBeRemoved) {
-		Set<Item> set = mapOfItemBasedTreeSet.get(outerKey);
-		boolean val =set.remove(innerKeyToBeRemoved);
-		if(!val)
-		{
-			throw new NullPointerException();
-		}
-		mapOfItemBasedTreeSet.put(outerKey, set);
+		mapOfItemBasedTreeSet.get(outerKey).remove(innerKeyToBeRemoved);
 	}
 
 }

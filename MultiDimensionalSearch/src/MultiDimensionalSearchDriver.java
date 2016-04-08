@@ -82,11 +82,11 @@ public class MultiDimensionalSearchDriver {
 				System.out.println("Houston, we have a problem.\nUnexpected line in input: " + s);
 				System.exit(0);
 			}
-			String rvb=rv+"";
+/*			String rvb=rv+"";
 			rvb= rvb.endsWith("0")?rvb.substring(0, rvb.length()-2):rvb;
 			rvb= rvb.charAt(rvb.length()-1)=='.'?rvb.substring(0,rvb.length()-1):rvb;
 			System.out.println(counter+": "+s+": "+rvb);
-			total+=rv;
+*/			total+=rv;
 			
 		}
 
