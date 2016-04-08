@@ -160,7 +160,13 @@ public class MultiDimensionalSearch {
 			@Override
 			public int compare(Item o1, Item o2) {
 				// System.out.println(o1+":"+o2);
-				return (o1.getPrice()).compareTo(o2.getPrice());
+				int temp= (o1.getPrice()).compareTo(o2.getPrice());
+				if(temp==0)
+				{
+					temp =o1.getId().compareTo(o2.getId());
+				}
+				 
+				return temp;
 			}
 		});
 	}
@@ -227,8 +233,6 @@ public class MultiDimensionalSearch {
 	double findMaxPrice(long des) {
 		TreeSet<Item> set = (TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
 		if (set != null && set.size() != 0) {
-
-			// System.out.println(set.last().getPrice());
 			return set.last().getPrice();
 		}
 		return Double.MIN_VALUE;
@@ -251,11 +255,12 @@ public class MultiDimensionalSearch {
 	private Set<Item> extractSubSetForDescription(long des, double lowPrice, double highPrice) {
 		TreeSet<Item> set = (TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
 		if (set != null && set.size() != 0) {
-			Item lowItem = new Item(-1L, lowPrice, null);
-			Item highItem = new Item(-1L, highPrice, null);
-			 System.out.println("__"+set+" ::"+set.size());
+			/**
+			 * Adding buffer for inclusivity.
+			 */
+			Item lowItem = new Item(1L, lowPrice-0.00000000001, null);
+			Item highItem = new Item(1L, highPrice+0.00000000001, null);
 			Set<Item> subSet = set.subSet(lowItem, true, highItem, true);
-			System.out.println("==>"+subSet);
 			return subSet;
 		}
 		return EMPTY_SET;
@@ -278,11 +283,15 @@ public class MultiDimensionalSearch {
 			 * remove entry from price index
 			 */
 			removeFromItemBasedTreeset(mapByPriceAndItem, item.getPrice(), item);
-
+			for (long subDescriptionKey : item.getDescription()) {
+				removeFromItemBasedTreeset(mapOfDescriptionSubStringAndPrice, subDescriptionKey, item);
+			}
+			
+			
 			double newPrice = item.getPrice() * ((double) 1 + ((double) rate / 100));
 			newPrice = truncateToTwoDecimalPlaces(newPrice);
 
-			double diff =  (newPrice - item.getPrice());
+			double diff = (newPrice - item.getPrice());
 			item.setPrice(newPrice);
 
 			/**
@@ -292,13 +301,12 @@ public class MultiDimensionalSearch {
 			/**
 			 * put entry into price index
 			 */
-			putItemInTreeSetOfItemsMap(mapByPriceAndItem, item.getPrice(), item, EMPTY_SET);
 
 			for (long subDescriptionKey : item.getDescription()) {
-				removeFromItemBasedTreeset(mapOfDescriptionSubStringAndPrice, subDescriptionKey, item);
 				putItemInTreeSetOfItemsMap(mapOfDescriptionSubStringAndPrice, subDescriptionKey, item,
 						priceBasedEmptyTreeSet());
 			}
+			putItemInTreeSetOfItemsMap(mapByPriceAndItem, item.getPrice(), item, EMPTY_SET);
 		}
 		return truncateToTwoDecimalPlaces(netIncrease);
 	}
@@ -390,17 +398,12 @@ public class MultiDimensionalSearch {
 	 */
 	private <T> void removeFromItemBasedTreeset(Map<T, Set<Item>> mapOfItemBasedTreeSet, T outerKey,
 			Item innerKeyToBeRemoved) {
-		// System.out.println(innerKeyToBeRemoved + "==>" + outerKey + ":=>" +
-		// mapOfItemBasedTreeSet);
 		Set<Item> set = mapOfItemBasedTreeSet.get(outerKey);
-		/*
-		 * Item itemTobeDeleted = null; for (Item item2 : set) { if
-		 * (item2.getId().longValue() == innerKeyToBeRemoved) { itemTobeDeleted
-		 * = item2; } }
-		 */
-		// if (itemTobeDeleted != null) {
-		// System.out.println(set.remove(innerKeyToBeRemoved));
-		// }
+		boolean val =set.remove(innerKeyToBeRemoved);
+		if(!val)
+		{
+			throw new NullPointerException();
+		}
 		mapOfItemBasedTreeSet.put(outerKey, set);
 	}
 
