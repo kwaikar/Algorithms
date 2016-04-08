@@ -20,19 +20,21 @@ public class MultiDimensionalSearchDriver {
 			in = new Scanner(System.in);
 		}
 		String s;
-		double rv = 0;
+		double total = 0;
 		description = new long[DLENGTH];
-
-		Timer timer = new Timer();
+		Statistics stats = new Statistics();
+		stats.timer();
 		MultiDimensionalSearch mds = new MultiDimensionalSearch();
-
+		int counter = 0;
 		while (in.hasNext()) {
+			double rv = 0;
+			counter++;
+			 
 			s = in.next();
 			if (s.charAt(0) == '#') {
 				s = in.nextLine();
 				continue;
-			}
-			System.out.println("|" + s + "|");
+			} 
 			if (s.equals("Insert")) {
 
 				long id = in.nextLong();
@@ -80,13 +82,25 @@ public class MultiDimensionalSearchDriver {
 				System.out.println("Houston, we have a problem.\nUnexpected line in input: " + s);
 				System.exit(0);
 			}
+			String rvb=rv+"";
+			rvb= rvb.endsWith("0")?rvb.substring(0, rvb.length()-2):rvb;
+			rvb= rvb.charAt(rvb.length()-1)=='.'?rvb.substring(0,rvb.length()-1):rvb;
+			System.out.println(counter+": "+s+": "+rvb);
+			total+=rv;
+			
 		}
-		System.out.println("=====>" + rv);
-		// System.out.println(timer.end());
+
+		System.out.println("=====>" + total);
+		stats.timer("Multiple Dimensional Search");
+		System.exit(0);
+		// //System.out.println(timer.end());
 	}
 
+	static double val = 0;
+
 	private static double printAndReturVal(double value) {
-		System.out.println("->" + value);
+		//  val+=value;
+	//	System.out.println("->" + val);
 		return value;
 	}
 }

@@ -13,20 +13,33 @@ public class DescriptionKey {
 	/**
 	 * Make description Key immutable
 	 */
-	private final int lengthOfKey;
-	private final Long[] key;
-	private Integer hashCode = null;
+	private final Integer lengthOfKey;
+	private final Long sumOfKeys;
+	private Long[] key;
 
 	public DescriptionKey(Long[] key) {
 		super();
 		this.lengthOfKey = key.length;
+		this.key = new Long[key.length];
 		this.key = key;
+		Long sum = 0L;
+		for (long singleKey : key) {
+			sum += singleKey;
+		}
+		sumOfKeys = sum;
+	}
+
+	/**
+	 * @return the sumOfKeys
+	 */
+	public Long getSumOfKeys() {
+		return sumOfKeys;
 	}
 
 	/**
 	 * @return the lengthOfKey
 	 */
-	public int getLengthOfKey() {
+	public Integer getLengthOfKey() {
 		return lengthOfKey;
 	}
 
@@ -44,16 +57,12 @@ public class DescriptionKey {
 	 */
 	@Override
 	public int hashCode() {
-		if (hashCode == null) {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + Arrays.hashCode(key);
-			result = prime * result + lengthOfKey;
-			hashCode = result;
+			result = prime * result + ((lengthOfKey == null) ? 0 : lengthOfKey.hashCode());
+			result = prime * result + ((sumOfKeys == null) ? 0 : sumOfKeys.hashCode());
 			return result;
-		} else {
-			return hashCode;
-		}
 	}
 
 	/*
@@ -72,7 +81,15 @@ public class DescriptionKey {
 		DescriptionKey other = (DescriptionKey) obj;
 		if (!Arrays.equals(key, other.key))
 			return false;
-		if (lengthOfKey != other.lengthOfKey)
+		if (lengthOfKey == null) {
+			if (other.lengthOfKey != null)
+				return false;
+		} else if (!lengthOfKey.equals(other.lengthOfKey))
+			return false;
+		if (sumOfKeys == null) {
+			if (other.sumOfKeys != null)
+				return false;
+		} else if (!sumOfKeys.equals(other.sumOfKeys))
 			return false;
 		return true;
 	}

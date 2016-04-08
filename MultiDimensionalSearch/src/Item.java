@@ -13,22 +13,23 @@ import java.util.List;
  *
  */
 public class Item {
-	private long id;
-	private double price;
-	private Long[] sortedDescription=new Long[0];
+	private Long id;
+	private Double price;
+	private Long[] sortedDescription = new Long[0];
 	private Integer hashCode = null;
 
-	public Item(long id, Double price, long[] sortedDescription) {
+	public Item(Long id, Double price, Long[] sortedDescription) {
 		super();
-		this.id = id;
-		this.price = price;
-		this.setDescription(sortedDescription);
+			this.id = id;
+			this.price = price;
+			this.setDescription(sortedDescription);
+			this.hashCode();
 	}
 
 	/**
 	 * @return the id
 	 */
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -43,7 +44,7 @@ public class Item {
 	 * @param price
 	 *            the price to set
 	 */
-	public void setPrice(double price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 
@@ -58,16 +59,17 @@ public class Item {
 	 * @param description
 	 *            the description to set
 	 */
-	public void setDescription(long[] description) {
-		List<Long> temp = new ArrayList<Long>();
-		for (Long long1 : description) {
-			if (long1 != null) {
-				temp.add(long1);
+	public void setDescription(Long[] description) {
+		if (description != null) {
+			List<Long> temp = new ArrayList<Long>();
+			for (Long Long1 : description) {
+				if (Long1 != null) {
+					temp.add(Long1);
+				}
 			}
+			Arrays.sort(description);
+			sortedDescription = description;
 		}
-		Collections.sort(temp);
-		System.out.println("seting" + temp);
-		sortedDescription = temp.toArray(sortedDescription);
 	}
 
 	/*
@@ -105,6 +107,17 @@ public class Item {
 		if (id != other.id)
 			return false;
 		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Item [id=" + id + ", price=" + price + ", sortedDescription=" + Arrays.toString(sortedDescription)
+				+ ", hashCode=" + hashCode + "]";
 	}
 
 }
