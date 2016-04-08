@@ -381,7 +381,6 @@ public class MultiDimensionalSearch {
 		}
 		return counter;
 	}
- F
 	/**
 	 * This method iterates through the map and puts the item inside the inner
 	 * treeset.
@@ -395,9 +394,9 @@ public class MultiDimensionalSearch {
 		Set<Item> treeSet = mapOfTreeSetOfItems.get(outerKey);
 		if (treeSet == null) {
 			treeSet = emptyHashSet;
+			mapOfTreeSetOfItems.put(outerKey, treeSet);
 		}
 		treeSet.add(itemToBePut);
-		mapOfTreeSetOfItems.put(outerKey, treeSet);
 	}
 
 	/**
