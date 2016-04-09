@@ -240,7 +240,7 @@ public class MultiDimensionalSearch {
 		if (set != null && set.size() != 0) {
 			return (double) set.first().getPrice() / 100;
 		}
-		return Long.MIN_VALUE;
+		return 0;
 	}
 
 	/**
@@ -254,7 +254,7 @@ public class MultiDimensionalSearch {
 		if (set != null && set.size() != 0) {
 			return (double) set.last().getPrice() / 100;
 		}
-		return Long.MIN_VALUE;
+		return 0;
 	}
 
 	/**
@@ -268,6 +268,7 @@ public class MultiDimensionalSearch {
 	 */
 	int findPriceRange(long des, double lowPrice, double highPrice) {
 		Set<Item> set = extractSubSetForDescription(des, (long) (lowPrice * 100), (long) (highPrice * 100));
+		//System.out.println(lowPrice+":"+set+" : "+highPrice);
 		if (set == null) {
 			return 0;
 		} else {
@@ -286,8 +287,8 @@ public class MultiDimensionalSearch {
 			/**
 			 * Adding buffer for inclusivity.
 			 */
-			Item lowItem = new Item(1L, lowPrice-1, null);
-			Item highItem = new Item(1L, highPrice+1, null);
+			Item lowItem = new Item(1L, lowPrice, null);
+			Item highItem = new Item(1L, highPrice, null);
 			return set.subSet(lowItem, true, highItem, true);
 		}
 		return EMPTY_SET;
@@ -302,7 +303,7 @@ public class MultiDimensionalSearch {
 	 * @return
 	 */
 	double priceHike(long minid, long maxid, double rate) {
-		double netIncrease = 0L;
+		long netIncrease = 0L;
 		for (Item item : mapById.subMap(minid, true, maxid, true).values()) {
 
 			/**
@@ -318,13 +319,13 @@ public class MultiDimensionalSearch {
 			long incr = (long) (oldPrice * percentage);
 
 			long newPrice = (oldPrice + incr);
-			double diff = incr / 100;
+			//double diff = incr / 100;
 			item.setPrice((newPrice));
 			// System.out.println(oldPrice + " : " + rate + " =>" + newPrice);
 			/**
 			 * calculate net difference between new and old price.
 			 */
-			netIncrease += diff;
+			netIncrease += incr;
 			/**
 			 * put entry into price index
 			 */
@@ -335,7 +336,7 @@ public class MultiDimensionalSearch {
 			}
 			putItemInTreeSetOfItemsMap(mapByPriceAndItem, item.getPrice(), item, EMPTY_SET);
 		}
-		return (netIncrease);
+		return ((double)netIncrease/100);
 	}
 
 	/**
