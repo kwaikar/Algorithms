@@ -1,4 +1,4 @@
-import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -17,8 +17,7 @@ import java.util.TreeSet;
  */
 public class MultiDimensionalSearch {
 
-	private Set<Item> EMPTY_SET = new HashSet<Item>();
-
+	private Set<Item> EMPTY_SET = new HashSet<Item>(); 
 	/**
 	 * mapForSameSame is a dedicated map created for samesame function and only
 	 * Structure <Item.desc.substring, Treeset<Item>>
@@ -268,7 +267,7 @@ public class MultiDimensionalSearch {
 	 * @return
 	 */
 	int findPriceRange(long des, double lowPrice, double highPrice) {
-		Set<Item> set = extractSubSetForDescription(des, (long) (lowPrice * 100)-1, (long) (highPrice * 100)+1);
+		Set<Item> set = extractSubSetForDescription(des, (long) (lowPrice * 100), (long) (highPrice * 100));
 		if (set == null) {
 			return 0;
 		} else {
@@ -287,9 +286,9 @@ public class MultiDimensionalSearch {
 			/**
 			 * Adding buffer for inclusivity.
 			 */
-			Item lowItem = new Item(1L, lowPrice, null);
-			Item highItem = new Item(1L, highPrice, null);
-			return set.subSet(lowItem, false, highItem, false);
+			Item lowItem = new Item(1L, lowPrice-1, null);
+			Item highItem = new Item(1L, highPrice+1, null);
+			return set.subSet(lowItem, true, highItem, true);
 		}
 		return EMPTY_SET;
 	}
@@ -319,7 +318,7 @@ public class MultiDimensionalSearch {
 			long incr = (long) (oldPrice * percentage);
 
 			long newPrice = (oldPrice + incr);
-			double diff = (double) (newPrice - oldPrice) / 100;
+			double diff = incr / 100;
 			item.setPrice((newPrice));
 			// System.out.println(oldPrice + " : " + rate + " =>" + newPrice);
 			/**
@@ -369,7 +368,7 @@ public class MultiDimensionalSearch {
 	 * @return
 	 */
 	int range(double lowPrice, double highPrice) {
-		return mapByPriceAndItem.subMap((long) lowPrice * 100-1, false, (long) highPrice * 100+1, false).values().size();
+		return mapByPriceAndItem.subMap((long) lowPrice * 100, true, (long) highPrice * 100, true).values().size();
 	}
 
 	/**

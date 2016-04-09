@@ -1,6 +1,7 @@
 
 import java.util.*;
 import java.io.*;
+import java.text.DecimalFormat;
 
 /**
  * Sample driver code for Project LP4. Modify as needed. Do not change
@@ -11,6 +12,7 @@ import java.io.*;
 public class MultiDimensionalSearchDriver {
 	static long[] description;
 	static final int DLENGTH = 100000;
+	public static DecimalFormat df = new DecimalFormat("#.00");
 
 	public static void main(String[] args) throws FileNotFoundException {
 		Scanner in;
@@ -29,12 +31,12 @@ public class MultiDimensionalSearchDriver {
 		while (in.hasNext()) {
 			double rv = 0;
 			counter++;
-			 
+
 			s = in.next();
 			if (s.charAt(0) == '#') {
 				s = in.nextLine();
 				continue;
-			} 
+			}
 			if (s.equals("Insert")) {
 
 				long id = in.nextLong();
@@ -82,15 +84,27 @@ public class MultiDimensionalSearchDriver {
 				System.out.println("Houston, we have a problem.\nUnexpected line in input: " + s);
 				System.exit(0);
 			}
-			String rvb=rv+"";
-			rvb= rvb.endsWith("0")?rvb.substring(0, rvb.length()-2):rvb;
-			rvb= rvb.charAt(rvb.length()-1)=='.'?rvb.substring(0,rvb.length()-1):rvb;
-			System.out.println(counter+": "+s+": "+rvb);
-			total+=rv;
-			
+			String rvb = rv + "";
+			rvb = rvb.endsWith("0") ? rvb.substring(0, rvb.length() - 2) : rvb;
+			rvb = rvb.charAt(rvb.length() - 1) == '.' ? rvb.substring(0, rvb.length() - 1) : rvb;
+
+			if (s.equalsIgnoreCase("find") ||s.equalsIgnoreCase("findMaxPrice")||s.equalsIgnoreCase("findMinPrice")) {
+				String str = df.format(rv);
+				if (str.indexOf('.')==0) {
+					str = "0" + str;
+				}
+				System.out.println(counter + ": " + s + ": " + str.replaceAll("\\.00", ""));
+
+			} else {
+				System.out.println(counter + ": " + s + ": " + rvb);
+
+			}
+
+			total += rv;
+
 		}
 
-		System.out.println("=====>" + total);
+		System.out.println(total);
 		stats.timer("Multiple Dimensional Search");
 		System.exit(0);
 		in.close();
@@ -100,8 +114,8 @@ public class MultiDimensionalSearchDriver {
 	static double val = 0;
 
 	private static double printAndReturVal(double value) {
-		//  val+=value;
-	//	System.out.println("->" + val);
+		// val+=value;
+		// System.out.println("->" + val);
 		return value;
 	}
 }
