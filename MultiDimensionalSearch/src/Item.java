@@ -14,16 +14,22 @@ import java.util.List;
  */
 public class Item {
 	private Long id;
+	/**
+	 * Converted into cents before string
+	 */
 	private Long price;
+	/**
+	 * Description is sorted before storing
+	 */
 	private Long[] sortedDescription = new Long[0];
 	private Integer hashCode = null;
 
 	public Item(Long id, Long price, Long[] sortedDescription) {
 		super();
-			this.id = id;
-			this.price = price;
-			this.setDescription(sortedDescription);
-			this.hashCode();
+		this.id = id;
+		this.price = price;
+		this.setDescription(sortedDescription);
+		this.hashCode();
 	}
 
 	/**

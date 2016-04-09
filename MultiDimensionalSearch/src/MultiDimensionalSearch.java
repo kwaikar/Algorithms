@@ -1,4 +1,3 @@
-import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -17,7 +16,7 @@ import java.util.TreeSet;
  */
 public class MultiDimensionalSearch {
 
-	private Set<Item> EMPTY_SET = new HashSet<Item>(); 
+	private Set<Item> EMPTY_SET = new HashSet<Item>();
 	/**
 	 * mapForSameSame is a dedicated map created for samesame function and only
 	 * Structure <Item.desc.substring, Treeset<Item>>
@@ -26,6 +25,11 @@ public class MultiDimensionalSearch {
 			new Comparator<DescriptionKey>() {
 				@Override
 				public int compare(DescriptionKey o1, DescriptionKey o2) {
+					/**
+					 * Detailed comparator that compares complete key only when
+					 * length and sum of keys are same - this is crucial for
+					 * samesame method performance.
+					 */
 					int temp = o1.getLengthOfKey().compareTo(o2.getLengthOfKey().intValue());
 					if (temp == 0) {
 						temp = o1.getSumOfKeys().compareTo(o2.getSumOfKeys());
@@ -80,10 +84,8 @@ public class MultiDimensionalSearch {
 			description[i] = desc[i];
 		}
 		long price = 0;
-		String[] priceString = priceDouble.toString().split("\\.");
-		price = Long.parseLong(priceString[0]) * 100 + (priceString[1].length() == 1
-				? Integer.parseInt(priceString[1]) * 10 : Integer.parseInt(priceString[1]));
-		
+		price = convertToCents(priceDouble);
+
 		if (id != null) {
 			Item item = mapById.get(id);
 			boolean isNew = false;
@@ -92,6 +94,10 @@ public class MultiDimensionalSearch {
 				isNew = true;
 				mapById.put(item.getId(), item);
 			} else {
+				/**
+				 * Since item already exists, we need to clean it up from all
+				 * maps.
+				 */
 				if (description.length != 0 && !Arrays.deepEquals(description, item.getDescription())) {
 					descChanged = true;
 					cleanupSameSameMapForItem(item);
@@ -101,7 +107,6 @@ public class MultiDimensionalSearch {
 					removeFromItemBasedTreeset(mapByPriceAndItem, item.getPrice(), item);
 				}
 				if (descChanged || priceChanged) {
-					// System.out.println("===" + item.getDescription());
 					for (long subDescriptionKey : item.getDescription()) {
 						removeFromItemBasedTreeset(mapOfDescriptionSubStringAndPrice, subDescriptionKey, item);
 					}
@@ -114,9 +119,9 @@ public class MultiDimensionalSearch {
 				}
 			}
 			/**
-			 * id field does not change hence need not be revisited.
+			 * Make new insertions corresponding to new as well as modified
+			 * state
 			 */
-
 			if (isNew || descChanged) {
 				updateSameSameMap(item);
 			}
@@ -138,6 +143,21 @@ public class MultiDimensionalSearch {
 		} else {
 			return 0;
 		}
+	}
+
+	/**
+	 * Accepts a double representation of currency and converts it into cents
+	 * based value.
+	 * 
+	 * @param priceDouble
+	 * @return
+	 */
+	public static long convertToCents(double priceDouble) {
+
+		String[] priceString = ((priceDouble == (long) priceDouble) ? String.format("%d", (long) priceDouble)
+				: String.format("%s", priceDouble)).toString().split("\\.");
+		return Long.parseLong(priceString[0]) * 100 + (priceString.length > 1 ? ((priceString[1].length() == 1
+				? Integer.parseInt(priceString[1]) * 10 : Integer.parseInt(priceString[1]))) : 0);
 	}
 
 	/**
@@ -268,7 +288,6 @@ public class MultiDimensionalSearch {
 	 */
 	int findPriceRange(long des, double lowPrice, double highPrice) {
 		Set<Item> set = extractSubSetForDescription(des, (long) (lowPrice * 100), (long) (highPrice * 100));
-		//System.out.println(lowPrice+":"+set+" : "+highPrice);
 		if (set == null) {
 			return 0;
 		} else {
@@ -284,11 +303,11 @@ public class MultiDimensionalSearch {
 	private Set<Item> extractSubSetForDescription(long des, long lowPrice, long highPrice) {
 		TreeSet<Item> set = (TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
 		if (set != null && set.size() != 0) {
-			/**
-			 * Adding buffer for inclusivity.
-			 */
 			Item lowItem = new Item(1L, lowPrice, null);
 			Item highItem = new Item(1L, highPrice, null);
+			/**
+			 * True flag needs to be sent to subset for inclusivity.
+			 */
 			return set.subSet(lowItem, true, highItem, true);
 		}
 		return EMPTY_SET;
@@ -314,14 +333,15 @@ public class MultiDimensionalSearch {
 				removeFromItemBasedTreeset(mapOfDescriptionSubStringAndPrice, subDescriptionKey, item);
 			}
 
+			/**
+			 * Calculate new price and increment compounding netIncrease
+			 * variable.
+			 */
 			long oldPrice = item.getPrice();
 			double percentage = rate / 100;
 			long incr = (long) (oldPrice * percentage);
+			item.setPrice(oldPrice + incr);
 
-			long newPrice = (oldPrice + incr);
-			//double diff = incr / 100;
-			item.setPrice((newPrice));
-			// System.out.println(oldPrice + " : " + rate + " =>" + newPrice);
 			/**
 			 * calculate net difference between new and old price.
 			 */
@@ -336,29 +356,7 @@ public class MultiDimensionalSearch {
 			}
 			putItemInTreeSetOfItemsMap(mapByPriceAndItem, item.getPrice(), item, EMPTY_SET);
 		}
-		return ((double)netIncrease/100);
-	}
-
-	/**
-	 * This method truncates input number.
-	 * 
-	 * @param num
-	 *            - number to be truncated
-	 * @return
-	 */
-	private Long truncateToTwoDecimalPlaces(long num) {
-
-		int number = (int) ((double) num * 100);
-		System.out.println(num + "--->" + ((double) number / 100));
-		/*
-		 * String str = num + ""; int dotIndex = str.indexOf('.'); if
-		 * (str.length() > dotIndex + 2) { return
-		 * Long.parseLong(str.substring(0, (dotIndex + 3))); } else if
-		 * (str.length() > dotIndex + 2) { return
-		 * Long.parseLong(str.substring(0, dotIndex + 2)); } else { return num;
-		 * }
-		 */
-		return (long) (number / 100);
+		return ((double) netIncrease / 100);
 	}
 
 	/**
