@@ -14,11 +14,11 @@ import java.util.List;
  */
 public class Item {
 	private Long id;
-	private Double price;
+	private Long price;
 	private Long[] sortedDescription = new Long[0];
 	private Integer hashCode = null;
 
-	public Item(Long id, Double price, Long[] sortedDescription) {
+	public Item(Long id, Long price, Long[] sortedDescription) {
 		super();
 			this.id = id;
 			this.price = price;
@@ -36,7 +36,7 @@ public class Item {
 	/**
 	 * @return the price
 	 */
-	public Double getPrice() {
+	public Long getPrice() {
 		return price;
 	}
 
@@ -44,7 +44,7 @@ public class Item {
 	 * @param price
 	 *            the price to set
 	 */
-	public void setPrice(Double price) {
+	public void setPrice(Long price) {
 		this.price = price;
 	}
 

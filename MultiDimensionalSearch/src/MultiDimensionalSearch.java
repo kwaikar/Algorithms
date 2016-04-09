@@ -1,3 +1,4 @@
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -55,7 +56,7 @@ public class MultiDimensionalSearch {
 	 * price based lookup - item reference is stored inside treeset Structure
 	 * <Item.price, Treeset<Item>>
 	 */
-	TreeMap<Double, Set<Item>> mapByPriceAndItem = new TreeMap<Double, Set<Item>>();
+	TreeMap<Long, Set<Item>> mapByPriceAndItem = new TreeMap<Long, Set<Item>>();
 
 	/**
 	 * Id based map - can be used for look-up, CRUD on id
@@ -71,7 +72,7 @@ public class MultiDimensionalSearch {
 	 * @param size
 	 * @return
 	 */
-	int insert(Long id, double price, long[] desc, int size) {
+	int insert(Long id, Double priceDouble, long[] desc, int size) {
 
 		boolean descChanged = false;
 		boolean priceChanged = false;
@@ -79,12 +80,18 @@ public class MultiDimensionalSearch {
 		for (int i = 0; i < desc.length; i++) {
 			description[i] = desc[i];
 		}
+		long price = 0;
+		String[] priceString = priceDouble.toString().split("\\.");
+		price = Long.parseLong(priceString[0]) * 100 + (priceString[1].length() == 1
+				? Integer.parseInt(priceString[1]) * 10 : Integer.parseInt(priceString[1]));
+		
 		if (id != null) {
 			Item item = mapById.get(id);
 			boolean isNew = false;
 			if (item == null) {
 				item = new Item(id, price, description);
 				isNew = true;
+				mapById.put(item.getId(), item);
 			} else {
 				if (description.length != 0 && !Arrays.deepEquals(description, item.getDescription())) {
 					descChanged = true;
@@ -110,7 +117,6 @@ public class MultiDimensionalSearch {
 			/**
 			 * id field does not change hence need not be revisited.
 			 */
-			mapById.put(item.getId(), item);
 
 			if (isNew || descChanged) {
 				updateSameSameMap(item);
@@ -182,7 +188,7 @@ public class MultiDimensionalSearch {
 		if (item == null) {
 			return 0;
 		} else {
-			return item.getPrice();
+			return ((double) item.getPrice() / 100);
 		}
 	}
 
@@ -233,9 +239,9 @@ public class MultiDimensionalSearch {
 	double findMinPrice(long des) {
 		TreeSet<Item> set = (TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
 		if (set != null && set.size() != 0) {
-			return set.first().getPrice();
+			return (double) set.first().getPrice() / 100;
 		}
-		return Double.MIN_VALUE;
+		return Long.MIN_VALUE;
 	}
 
 	/**
@@ -247,9 +253,9 @@ public class MultiDimensionalSearch {
 	double findMaxPrice(long des) {
 		TreeSet<Item> set = (TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
 		if (set != null && set.size() != 0) {
-			return set.last().getPrice();
+			return (double) set.last().getPrice() / 100;
 		}
-		return Double.MIN_VALUE;
+		return Long.MIN_VALUE;
 	}
 
 	/**
@@ -262,7 +268,7 @@ public class MultiDimensionalSearch {
 	 * @return
 	 */
 	int findPriceRange(long des, double lowPrice, double highPrice) {
-		Set<Item> set = extractSubSetForDescription(des, lowPrice, highPrice);
+		Set<Item> set = extractSubSetForDescription(des, (long) (lowPrice * 100)-1, (long) (highPrice * 100)+1);
 		if (set == null) {
 			return 0;
 		} else {
@@ -275,15 +281,15 @@ public class MultiDimensionalSearch {
 	 * @param lowPrice
 	 * @param highPrice
 	 */
-	private Set<Item> extractSubSetForDescription(long des, double lowPrice, double highPrice) {
+	private Set<Item> extractSubSetForDescription(long des, long lowPrice, long highPrice) {
 		TreeSet<Item> set = (TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
 		if (set != null && set.size() != 0) {
 			/**
 			 * Adding buffer for inclusivity.
 			 */
-			Item lowItem = new Item(1L, lowPrice - 0.00000000001, null);
-			Item highItem = new Item(1L, highPrice + 0.00000000001, null);
-			return set.subSet(lowItem, true, highItem, true);
+			Item lowItem = new Item(1L, lowPrice, null);
+			Item highItem = new Item(1L, highPrice, null);
+			return set.subSet(lowItem, false, highItem, false);
 		}
 		return EMPTY_SET;
 	}
@@ -297,7 +303,7 @@ public class MultiDimensionalSearch {
 	 * @return
 	 */
 	double priceHike(long minid, long maxid, double rate) {
-		double netIncrease = 0;
+		double netIncrease = 0L;
 		for (Item item : mapById.subMap(minid, true, maxid, true).values()) {
 
 			/**
@@ -308,12 +314,14 @@ public class MultiDimensionalSearch {
 				removeFromItemBasedTreeset(mapOfDescriptionSubStringAndPrice, subDescriptionKey, item);
 			}
 
-			double newPrice = item.getPrice() * ((double) 1 + ((double) rate / 100));
-			newPrice = truncateToTwoDecimalPlaces(newPrice);
+			long oldPrice = item.getPrice();
+			double percentage = rate / 100;
+			long incr = (long) (oldPrice * percentage);
 
-			double diff = (newPrice - item.getPrice());
-			item.setPrice(newPrice);
-
+			long newPrice = (oldPrice + incr);
+			double diff = (double) (newPrice - oldPrice) / 100;
+			item.setPrice((newPrice));
+			// System.out.println(oldPrice + " : " + rate + " =>" + newPrice);
 			/**
 			 * calculate net difference between new and old price.
 			 */
@@ -328,7 +336,7 @@ public class MultiDimensionalSearch {
 			}
 			putItemInTreeSetOfItemsMap(mapByPriceAndItem, item.getPrice(), item, EMPTY_SET);
 		}
-		return truncateToTwoDecimalPlaces(netIncrease);
+		return (netIncrease);
 	}
 
 	/**
@@ -338,16 +346,19 @@ public class MultiDimensionalSearch {
 	 *            - number to be truncated
 	 * @return
 	 */
-	private double truncateToTwoDecimalPlaces(double num) {
-		String str = num + "";
-		int dotIndex = str.indexOf('.');
-		if (str.length() > dotIndex + 2) {
-			return Double.parseDouble(str.substring(0, (dotIndex + 3)));
-		} else if (str.length() > dotIndex + 2) {
-			return Double.parseDouble(str.substring(0, dotIndex + 2));
-		} else {
-			return num;
-		}
+	private Long truncateToTwoDecimalPlaces(long num) {
+
+		int number = (int) ((double) num * 100);
+		System.out.println(num + "--->" + ((double) number / 100));
+		/*
+		 * String str = num + ""; int dotIndex = str.indexOf('.'); if
+		 * (str.length() > dotIndex + 2) { return
+		 * Long.parseLong(str.substring(0, (dotIndex + 3))); } else if
+		 * (str.length() > dotIndex + 2) { return
+		 * Long.parseLong(str.substring(0, dotIndex + 2)); } else { return num;
+		 * }
+		 */
+		return (long) (number / 100);
 	}
 
 	/**
@@ -358,7 +369,7 @@ public class MultiDimensionalSearch {
 	 * @return
 	 */
 	int range(double lowPrice, double highPrice) {
-		return mapByPriceAndItem.subMap(lowPrice, true, highPrice, true).values().size();
+		return mapByPriceAndItem.subMap((long) lowPrice * 100-1, false, (long) highPrice * 100+1, false).values().size();
 	}
 
 	/**
@@ -381,6 +392,7 @@ public class MultiDimensionalSearch {
 		}
 		return counter;
 	}
+
 	/**
 	 * This method iterates through the map and puts the item inside the inner
 	 * treeset.
