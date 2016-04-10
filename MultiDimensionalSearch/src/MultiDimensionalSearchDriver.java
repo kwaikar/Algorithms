@@ -49,36 +49,36 @@ public class MultiDimensionalSearchDriver {
 					des = in.nextInt();
 				}
 				description[index] = 0;
-				rv += mds.insert(id, price, Arrays.copyOfRange(description, 0, index), index);
+				rv += 100*mds.insert(id, price, Arrays.copyOfRange(description, 0, index), index);
 
 			} else if (s.equals("Find")) {
 				long id = in.nextLong();
-				rv +=  (mds.find(id));
+				rv += MultiDimensionalSearch.convertToCents (mds.find(id));
 			} else if (s.equals("Delete")) {
 				long id = in.nextLong();
-				rv +=  (mds.delete(id));
+				rv +=100* (mds.delete(id));
 			} else if (s.equals("FindMinPrice")) {
 				long des = in.nextLong();
-				rv +=  (mds.findMinPrice(des));
+				rv += MultiDimensionalSearch.convertToCents (mds.findMinPrice(des));
 			} else if (s.equals("FindMaxPrice")) {
 				long des = in.nextLong();
-				rv +=  (mds.findMaxPrice(des));
+				rv += MultiDimensionalSearch.convertToCents (mds.findMaxPrice(des));
 			} else if (s.equals("FindPriceRange")) {
 				long des = in.nextLong();
 				double lowPrice = in.nextDouble();
 				double highPrice = in.nextDouble();
-				rv +=  (mds.findPriceRange(des, lowPrice, highPrice));
+				rv += 100*mds.findPriceRange(des, lowPrice, highPrice);
 			} else if (s.equals("PriceHike")) {
 				long minid = in.nextLong();
 				long maxid = in.nextLong();
 				double rate = in.nextDouble();
-				rv +=  (mds.priceHike(minid, maxid, rate));
+				rv += MultiDimensionalSearch.convertToCents (mds.priceHike(minid, maxid, rate));
 			} else if (s.equals("Range")) {
 				double lowPrice = in.nextDouble();
 				double highPrice = in.nextDouble();
-				rv +=  (mds.range(lowPrice, highPrice));
+				rv += 100*(mds.range(lowPrice, highPrice));
 			} else if (s.equals("SameSame")) {
-				rv +=  (mds.samesame());
+				rv +=  100* (mds.samesame());
 			} else if (s.equals("End")) {
 				break;
 			} else {
@@ -88,12 +88,13 @@ public class MultiDimensionalSearchDriver {
 			/*
 			 * Following portion needs to be uncommented for printing the detailed output of the program.
 			 * 
-			 * String rvb = rv + "";
+			 */
+			/*String rvb = ((double)rv/100) + "";
 			rvb = rvb.endsWith("0") ? rvb.substring(0, rvb.length() - 2) : rvb;
 			rvb = rvb.charAt(rvb.length() - 1) == '.' ? rvb.substring(0, rvb.length() - 1) : rvb;
 
 			if (s.equalsIgnoreCase("find") ||s.equalsIgnoreCase("findMaxPrice")||s.equalsIgnoreCase("findMinPrice")) {
-				String str = df.format(rv);
+				String str = df.format(((double)rv/100));
 				if (str.indexOf('.')==0) {
 					str = "0" + str;
 				}
@@ -103,23 +104,12 @@ public class MultiDimensionalSearchDriver {
 				System.out.println(counter + ": " + s + ": " + rvb);
 
 			}*/
-
 			total += rv;
-
 		}
 
-		System.out.println( total );
+		System.out.println((double)total /100);
 		stats.timer("Multiple Dimensional Search");
 		System.exit(0);
 		in.close();
-		// //System.out.println(timer.end());
-	}
-
-	static double val = 0;
-
-	private static long printAndReturVal(double value) {
-		// val+=value;
-		// System.out.println("->" + val);
-		return MultiDimensionalSearch.convertToCents(value);
 	}
 }

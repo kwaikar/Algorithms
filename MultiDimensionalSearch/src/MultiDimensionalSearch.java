@@ -77,6 +77,13 @@ public class MultiDimensionalSearch {
 	 */
 	int insert(Long id, Double priceDouble, long[] desc, int size) {
 
+		/**
+		 * Invariants: descChanged - flag suggesting change of description
+		 * priceChanged - flag suggesting change of price description -
+		 * processed input array in Wrapper format price - processed input that
+		 * is in cents instead of dollars. isNew - flag for new Item instead of
+		 * item update.
+		 */
 		boolean descChanged = false;
 		boolean priceChanged = false;
 		Long[] description = new Long[desc.length];
@@ -90,6 +97,7 @@ public class MultiDimensionalSearch {
 			Item item = mapById.get(id);
 			boolean isNew = false;
 			if (item == null) {
+
 				item = new Item(id, price, description);
 				isNew = true;
 				mapById.put(item.getId(), item);
@@ -135,11 +143,8 @@ public class MultiDimensionalSearch {
 			if (isNew || priceChanged) {
 				putItemInTreeSetOfItemsMap(mapByPriceAndItem, item.getPrice(), item, EMPTY_SET);
 			}
-			if (isNew) {
-				return 1;
-			} else {
-				return 0;
-			}
+			return isNew ? 1 : 0;
+
 		} else {
 			return 0;
 		}
@@ -180,18 +185,14 @@ public class MultiDimensionalSearch {
 	/**
 	 * This method returns a price comparator based empty Treeset
 	 * 
-	 * @return
+	 * @return - empty TreeSet with comparator that sorts data based on price and then on id.
 	 */
 	private Set<Item> priceBasedEmptyTreeSet() {
 		return new TreeSet<>(new Comparator<Item>() {
 			@Override
 			public int compare(Item o1, Item o2) {
 				int temp = (o1.getPrice()).compareTo(o2.getPrice());
-				if (temp == 0) {
-					temp = o1.getId().compareTo(o2.getId());
-				}
-
-				return temp;
+				return (temp == 0) ? o1.getId().compareTo(o2.getId()) : temp;
 			}
 		});
 	}
@@ -204,11 +205,7 @@ public class MultiDimensionalSearch {
 	 */
 	double find(long id) {
 		Item item = mapById.get(id);
-		if (item == null) {
-			return 0;
-		} else {
-			return ((double) item.getPrice() / 100);
-		}
+		return item == null? 0:((double) item.getPrice() / 100);
 	}
 
 	/**
@@ -233,7 +230,6 @@ public class MultiDimensionalSearch {
 
 	/**
 	 * Cleans up item from mapForSameSame
-	 * 
 	 * @param item
 	 */
 	public void cleanupSameSameMapForItem(Item item) {
@@ -250,10 +246,10 @@ public class MultiDimensionalSearch {
 	}
 
 	/**
-	 * returns minimum item containing des substring
+	 * Returns price of minimum item containing des substring
 	 * 
-	 * @param des
-	 * @return
+	 * @param des - description subString to be used for fetching.
+	 * @return - minimum price of the element found.
 	 */
 	double findMinPrice(long des) {
 		TreeSet<Item> set = (TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
@@ -264,10 +260,10 @@ public class MultiDimensionalSearch {
 	}
 
 	/**
-	 * Finds max price of item containing des substring
+	 * Returns max price of item containing des substring
 	 * 
-	 * @param des
-	 * @return
+	 * @param des - description subString to be used for fetching.
+	 * @return - max price found in dollars
 	 */
 	double findMaxPrice(long des) {
 		TreeSet<Item> set = (TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
@@ -287,7 +283,26 @@ public class MultiDimensionalSearch {
 	 * @return
 	 */
 	int findPriceRange(long des, double lowPrice, double highPrice) {
-		Set<Item> set = extractSubSetForDescription(des, (long) (lowPrice * 100), (long) (highPrice * 100));
+		/*int counter =0;
+		for(Set<Item> item : mapByPriceAndItem.subMap(convertToCents(lowPrice),true, convertToCents(highPrice),true).values())
+		{
+		for (Item item2 : item) {
+			for (Long val: item2.getDescription()) {
+				if(val.longValue()==(des))
+				{
+					counter++;
+					break;
+				}
+				else if(val>des)
+				{
+					break;
+				}
+			} 
+		}	
+		}
+		return counter;
+		*/
+		Set<Item> set = extractSubSetForDescription(des, convertToCents(lowPrice), convertToCents(highPrice));
 		if (set == null) {
 			return 0;
 		} else {
@@ -296,6 +311,7 @@ public class MultiDimensionalSearch {
 	}
 
 	/**
+	 * This method returns set of items that fall in the range of lowPrice and highPrice and have des value in their description
 	 * @param des
 	 * @param lowPrice
 	 * @param highPrice
@@ -308,7 +324,7 @@ public class MultiDimensionalSearch {
 			/**
 			 * True flag needs to be sent to subset for inclusivity.
 			 */
-			return set.subSet(lowItem, true, highItem, true);
+			return set.subSet(lowItem, false, highItem, false);
 		}
 		return EMPTY_SET;
 	}
@@ -316,23 +332,31 @@ public class MultiDimensionalSearch {
 	/**
 	 * hikes price of all elements in the given range of ids.
 	 * 
-	 * @param minid
-	 * @param maxid
-	 * @param rate
+	 * @param minid - start id of the range
+	 * @param maxid - end id of the range
+	 * @param rate - percentage rate to be hiked on all elements whose ids fall in the given range. 
 	 * @return
 	 */
 	double priceHike(long minid, long maxid, double rate) {
 		long netIncrease = 0L;
+		
 		for (Item item : mapById.subMap(minid, true, maxid, true).values()) {
 
 			/**
-			 * remove entry from price index
+			 * remove entry from price index and description based index.
 			 */
 			removeFromItemBasedTreeset(mapByPriceAndItem, item.getPrice(), item);
 			for (long subDescriptionKey : item.getDescription()) {
 				removeFromItemBasedTreeset(mapOfDescriptionSubStringAndPrice, subDescriptionKey, item);
 			}
 
+			/**
+			 * netIncrease - total hike
+			 * oldPrice - existing price of the item
+			 * percentage - rate converted into percentage for calculation
+			 * incr - total increment in the value
+			 * item - pointer to current item to be iterated on.
+			 */
 			/**
 			 * Calculate new price and increment compounding netIncrease
 			 * variable.
@@ -367,7 +391,10 @@ public class MultiDimensionalSearch {
 	 * @return
 	 */
 	int range(double lowPrice, double highPrice) {
-		return mapByPriceAndItem.subMap((long) lowPrice * 100, true, (long) highPrice * 100, true).values().size();
+		/**
+		 * true flag for inclusivity. Multiply by hundred since maps store values in cents and not in dollars.
+		 */
+		return mapByPriceAndItem.subMap(convertToCents(lowPrice)-1, false, convertToCents(highPrice)+1,false).values().size();
 	}
 
 	/**
@@ -380,7 +407,9 @@ public class MultiDimensionalSearch {
 	 * @return - number of items that satisfy both conditions.
 	 */
 	int samesame() {
-		// System.out.println(mapForSameSame);
+		/**
+		 * counter for counting number of entries that follow the criteria.
+		 */
 		int counter = 0;
 		for (Set<Item> value : mapForSameSame.values()) {
 			int size = value.size();
@@ -401,6 +430,10 @@ public class MultiDimensionalSearch {
 	 */
 	private static <T> void putItemInTreeSetOfItemsMap(Map<T, Set<Item>> mapOfTreeSetOfItems, T outerKey,
 			Item itemToBePut, Set<Item> emptyHashSet) {
+		/**
+		 * Invariant:
+		 * treeSet - reference to map's inner TreeSet.
+		 */
 		Set<Item> treeSet = mapOfTreeSetOfItems.get(outerKey);
 		if (treeSet == null) {
 			treeSet = emptyHashSet;
@@ -410,7 +443,7 @@ public class MultiDimensionalSearch {
 	}
 
 	/**
-	 * This method removes the entry by iner id
+	 * This method removes the entry by inner id
 	 * 
 	 * @param mapOfItemBasedTreeSet
 	 * @param innerKeyToBeRemoved
