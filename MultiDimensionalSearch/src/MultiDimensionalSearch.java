@@ -394,7 +394,7 @@ public class MultiDimensionalSearch {
 		/**
 		 * true flag for inclusivity. Multiply by hundred since maps store values in cents and not in dollars.
 		 */
-		return mapByPriceAndItem.subMap(convertToCents(lowPrice)-1, false, convertToCents(highPrice)+1,false).values().size();
+		return mapByPriceAndItem.subMap(convertToCents(lowPrice), true, convertToCents(highPrice),true).values().size();
 	}
 
 	/**
