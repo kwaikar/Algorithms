@@ -1,6 +1,9 @@
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -21,45 +24,12 @@ public class MultiDimensionalSearch {
 	 * mapForSameSame is a dedicated map created for samesame function and only
 	 * Structure <Item.desc.substring, Treeset<Item>>
 	 */
-	Map<DescriptionKey, Set<Item>> mapForSameSame = new TreeMap<DescriptionKey, Set<Item>>(
-			new Comparator<DescriptionKey>() {
-				@Override
-				public int compare(DescriptionKey o1, DescriptionKey o2) {
-					/**
-					 * Detailed comparator that compares complete key only when
-					 * length and sum of keys are same - this is crucial for
-					 * samesame method performance.
-					 */
-					int temp = o1.getLengthOfKey().compareTo(o2.getLengthOfKey().intValue());
-					if (temp == 0) {
-						temp = o1.getSumOfKeys().compareTo(o2.getSumOfKeys());
-						if (temp == 0) {
-							boolean equals = Arrays.equals(o1.getKey(), o2.getKey());
-							if (equals) {
-								return 0;
-							} else {
-								return -1;
-							}
-						} else {
-							return temp;
-						}
-					} else {
-						return temp;
-					}
-
-				}
-			});
+	Map<DescriptionKey, Set<Item>> mapForSameSame = new HashMap<DescriptionKey, Set<Item>>();
 
 	/**
 	 * description sub-part based look-up
 	 */
-	Map<Long, Set<Item>> mapOfDescriptionSubStringAndPrice = new TreeMap<Long, Set<Item>>();
-
-	/**
-	 * price based lookup - item reference is stored inside treeset Structure
-	 * <Item.price, Treeset<Item>>
-	 */
-	TreeMap<Long, Set<Item>> mapByPriceAndItem = new TreeMap<Long, Set<Item>>();
+	Map<Long, TreeSet<Item>> mapOfDescriptionSubStringAndPrice = new TreeMap<Long, TreeSet<Item>>();
 
 	/**
 	 * Id based map - can be used for look-up, CRUD on id
@@ -93,62 +63,60 @@ public class MultiDimensionalSearch {
 		long price = 0;
 		price = convertToCents(priceDouble);
 
-		if (id != null) {
-			Item item = mapById.get(id);
-			boolean isNew = false;
-			if (item == null) {
+		Item item = mapById.get(id);
+		boolean isNew = false;
+		if (item == null) {
 
-				item = new Item(id, price, description);
-				isNew = true;
-				mapById.put(item.getId(), item);
-			} else {
-				/**
-				 * Since item already exists, we need to clean it up from all
-				 * maps.
-				 */
-				if (description.length != 0 && !Arrays.deepEquals(description, item.getDescription())) {
-					descChanged = true;
-					cleanupSameSameMapForItem(item);
-				}
-				if (item.getPrice() != price) {
-					priceChanged = true;
-					removeFromItemBasedTreeset(mapByPriceAndItem, item.getPrice(), item);
-				}
-				if (descChanged || priceChanged) {
-					for (long subDescriptionKey : item.getDescription()) {
-						removeFromItemBasedTreeset(mapOfDescriptionSubStringAndPrice, subDescriptionKey, item);
-					}
-				}
-				if (description.length == 0) {
-					item.setPrice(price);
-				} else {
-					item.setDescription(description);
-					item.setPrice(price);
-				}
-			}
-			/**
-			 * Make new insertions corresponding to new as well as modified
-			 * state
-			 */
-			if (isNew || descChanged) {
-				updateSameSameMap(item);
-			}
-
-			if (isNew || descChanged || priceChanged) {
-				for (Long subString : item.getDescription()) {
-					putItemInTreeSetOfItemsMap(mapOfDescriptionSubStringAndPrice, subString, item,
-							priceBasedEmptyTreeSet());
-				}
-			}
-			if (isNew || priceChanged) {
-				putItemInTreeSetOfItemsMap(mapByPriceAndItem, item.getPrice(), item, EMPTY_SET);
-			}
-			return isNew ? 1 : 0;
-
+			item = new Item(id, price, description);
+			isNew = true;
+			mapById.put(item.getId(), item);
 		} else {
-			return 0;
+			/**
+			 * Since item already exists, we need to clean it up from all maps.
+			 */
+			if (description.length != 0 && !Arrays.deepEquals(description, item.getDescription())) {
+				descChanged = true;
+				cleanupSameSameMapForItem(item);
+			}
+			if (item.getPrice() != price) {
+				priceChanged = true;
+			}
+			if (descChanged || priceChanged) {
+				removeFromItemBasedTreeset(mapOfDescriptionSubStringAndPrice, item.getDescription(), item);
+			}
+
+			if (description.length == 0) {
+				item.setPrice(price);
+				priceChanged = true;
+			} else {
+				item.setDescription(description);
+				item.setPrice(price);
+				priceChanged = true;
+				descChanged = true;
+
+			}
 		}
+		/**
+		 * Make new insertions corresponding to new as well as modified state
+		 */
+
+		if (isNew || descChanged) {
+			updateSameSameMap(item);
+		}
+
+		if (isNew || descChanged || priceChanged) {
+			for (Long subString : item.getDescription()) {
+				putItemInTreeSetOfItemsMap(mapOfDescriptionSubStringAndPrice, subString, item,
+						priceBasedEmptyTreeSet());
+			}
+		}
+
+	
+
+		return isNew ? 1 : 0;
 	}
+
+	private static DecimalFormat myFormatter = new DecimalFormat("###.##");
 
 	/**
 	 * Accepts a double representation of currency and converts it into cents
@@ -159,8 +127,7 @@ public class MultiDimensionalSearch {
 	 */
 	public static long convertToCents(double priceDouble) {
 
-		String[] priceString = ((priceDouble == (long) priceDouble) ? String.format("%d", (long) priceDouble)
-				: String.format("%s", priceDouble)).toString().split("\\.");
+		String[] priceString = myFormatter.format(priceDouble).split("\\.");
 		return Long.parseLong(priceString[0]) * 100 + (priceString.length > 1 ? ((priceString[1].length() == 1
 				? Integer.parseInt(priceString[1]) * 10 : Integer.parseInt(priceString[1]))) : 0);
 	}
@@ -176,9 +143,9 @@ public class MultiDimensionalSearch {
 			Set<Item> commonItems = mapForSameSame.get(key);
 			if (commonItems == null) {
 				commonItems = new HashSet<Item>();
+				mapForSameSame.put(key, commonItems);
 			}
 			commonItems.add(item);
-			mapForSameSame.put(key, commonItems);
 		}
 	}
 
@@ -188,7 +155,7 @@ public class MultiDimensionalSearch {
 	 * @return - empty TreeSet with comparator that sorts data based on price
 	 *         and then on id.
 	 */
-	private Set<Item> priceBasedEmptyTreeSet() {
+	private TreeSet<Item> priceBasedEmptyTreeSet() {
 		return new TreeSet<>(new Comparator<Item>() {
 			@Override
 			public int compare(Item o1, Item o2) {
@@ -222,10 +189,7 @@ public class MultiDimensionalSearch {
 			counter += descriptionSubSequence;
 		}
 		cleanupSameSameMapForItem(item);
-		for (long subDescriptionKey : item.getDescription()) {
-			removeFromItemBasedTreeset(mapOfDescriptionSubStringAndPrice, subDescriptionKey, item);
-		}
-		removeFromItemBasedTreeset(mapByPriceAndItem, item.getPrice(), item);
+		removeFromItemBasedTreeset(mapOfDescriptionSubStringAndPrice, item.getDescription(), item);
 		return counter;
 	}
 
@@ -237,13 +201,12 @@ public class MultiDimensionalSearch {
 	public void cleanupSameSameMapForItem(Item item) {
 		if ((item.getDescription().length >= 8)) {
 			DescriptionKey descKey = new DescriptionKey(item.getDescription());
-			Set<Item> hashSet = mapForSameSame.remove(descKey);
-			if (hashSet != null) {
-				hashSet.remove(item);
-				if (hashSet.size() != 0) {
-					mapForSameSame.put(descKey, hashSet);
-				}
+			Set<Item> hashSet = mapForSameSame.get(descKey);
+			boolean value = hashSet.remove(item);
+			if (!value) {
+				throw new NullPointerException();
 			}
+		//	mapForSameSame.put(descKey, hashSet);
 		}
 	}
 
@@ -255,7 +218,7 @@ public class MultiDimensionalSearch {
 	 * @return - minimum price of the element found.
 	 */
 	double findMinPrice(long des) {
-		TreeSet<Item> set = (TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
+		TreeSet<Item> set = mapOfDescriptionSubStringAndPrice.get(des);
 		if (set != null && set.size() != 0) {
 			return (double) set.first().getPrice() / 100;
 		}
@@ -270,7 +233,7 @@ public class MultiDimensionalSearch {
 	 * @return - max price found in dollars
 	 */
 	double findMaxPrice(long des) {
-		TreeSet<Item> set = (TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
+		TreeSet<Item> set = mapOfDescriptionSubStringAndPrice.get(des);
 		if (set != null && set.size() != 0) {
 			return (double) set.last().getPrice() / 100;
 		}
@@ -287,7 +250,7 @@ public class MultiDimensionalSearch {
 	 * @return
 	 */
 	int findPriceRange(long des, double lowPrice, double highPrice) {
-		 
+
 		Set<Item> set = extractSubSetForDescription(des, convertToCents(lowPrice), convertToCents(highPrice));
 		if (set == null) {
 			return 0;
@@ -307,12 +270,18 @@ public class MultiDimensionalSearch {
 	private Set<Item> extractSubSetForDescription(long des, long lowPrice, long highPrice) {
 		TreeSet<Item> set = (TreeSet<Item>) mapOfDescriptionSubStringAndPrice.get(des);
 		if (set != null && set.size() != 0) {
-			Item lowItem = new Item(1L, lowPrice, null);
-			Item highItem = new Item(1L, highPrice+1, null);
+			Item lowItem = new Item(1L, lowPrice - 1, null);
+			Item highItem = new Item(1L, highPrice + 1, null);
 			/**
 			 * True flag needs to be sent to subset for inclusivity.
 			 */
-			return set.subSet(lowItem, false, highItem, false);
+			Set<Item> setToBeReturned = new HashSet<Item>();
+			for (Item item : set.subSet(lowItem, true, highItem, true)) {
+				if (item.getPrice() >= lowPrice && item.getPrice() <= highPrice) {
+					setToBeReturned.add(item);
+				}
+			}
+			return setToBeReturned;
 		}
 		return EMPTY_SET;
 	}
@@ -332,44 +301,44 @@ public class MultiDimensionalSearch {
 	double priceHike(long minid, long maxid, double rate) {
 		long netIncrease = 0L;
 
-		for (Item item : mapById.subMap(minid, true, maxid, true).values()) {
+		for (Item item : mapById.subMap(minid - 1, true, maxid + 1, true).values()) {
 
-			/**
-			 * remove entry from price index and description based index.
-			 */
-			removeFromItemBasedTreeset(mapByPriceAndItem, item.getPrice(), item);
-			for (long subDescriptionKey : item.getDescription()) {
-				removeFromItemBasedTreeset(mapOfDescriptionSubStringAndPrice, subDescriptionKey, item);
+			if (item.getId() >= minid && item.getId() <= maxid) {
+				/**
+				 * remove entry from price index and description based index.
+				 */
+
+				removeFromItemBasedTreeset(mapOfDescriptionSubStringAndPrice, item.getDescription(), item);
+
+				/**
+				 * netIncrease - total hike oldPrice - existing price of the
+				 * item percentage - rate converted into percentage for
+				 * calculation incr - total increment in the value item -
+				 * pointer to current item to be iterated on.
+				 */
+				/**
+				 * Calculate new price and increment compounding netIncrease
+				 * variable.
+				 */
+				long oldPrice = item.getPrice();
+				double percentage = rate / 100;
+				long incr = (long) ((double) oldPrice * percentage);
+				item.setPrice(oldPrice + incr);
+
+				/**
+				 * calculate net difference between new and old price.
+				 */
+				netIncrease += incr;
+				/**
+				 * put entry into price index
+				 */
+
+				for (long subDescriptionKey : item.getDescription()) {
+					putItemInTreeSetOfItemsMap(mapOfDescriptionSubStringAndPrice, subDescriptionKey, item,
+							priceBasedEmptyTreeSet());
+				}
+				// mapById.put(item.getId(), item);
 			}
-
-			/**
-			 * netIncrease - total hike oldPrice - existing price of the item
-			 * percentage - rate converted into percentage for calculation incr
-			 * - total increment in the value item - pointer to current item to
-			 * be iterated on.
-			 */
-			/**
-			 * Calculate new price and increment compounding netIncrease
-			 * variable.
-			 */
-			long oldPrice = item.getPrice();
-			double percentage = rate / 100;
-			long incr = (long) (oldPrice * percentage);
-			item.setPrice(oldPrice + incr);
-
-			/**
-			 * calculate net difference between new and old price.
-			 */
-			netIncrease += incr;
-			/**
-			 * put entry into price index
-			 */
-
-			for (long subDescriptionKey : item.getDescription()) {
-				putItemInTreeSetOfItemsMap(mapOfDescriptionSubStringAndPrice, subDescriptionKey, item,
-						priceBasedEmptyTreeSet());
-			}
-			putItemInTreeSetOfItemsMap(mapByPriceAndItem, item.getPrice(), item, EMPTY_SET);
 		}
 		return ((double) netIncrease / 100);
 	}
@@ -382,12 +351,14 @@ public class MultiDimensionalSearch {
 	 * @return
 	 */
 	int range(double lowPrice, double highPrice) {
-		/**
-		 * true flag for inclusivity. Multiply by hundred since maps store
-		 * values in cents and not in dollars.
-		 */
-		return mapByPriceAndItem.subMap(convertToCents(lowPrice), false, convertToCents(highPrice), false).values()
-				.size();
+		long lowPriceCents = convertToCents(lowPrice);
+		long highPriceCents = convertToCents(highPrice);
+		int counter = 0;
+		for (Map.Entry<Long, Item> entry : mapById.entrySet()) {
+			if (entry.getValue().getPrice() >= lowPriceCents && entry.getValue().getPrice() <= highPriceCents)
+				counter++;
+		}
+		return counter;
 	}
 
 	/**
@@ -421,29 +392,38 @@ public class MultiDimensionalSearch {
 	 * @param mapOfTreeSetOfItems
 	 * @param outerKey
 	 */
-	private static <T> void putItemInTreeSetOfItemsMap(Map<T, Set<Item>> mapOfTreeSetOfItems, T outerKey,
-			Item itemToBePut, Set<Item> emptyHashSet) {
+	private static <T> void putItemInTreeSetOfItemsMap(Map<T, TreeSet<Item>> mapOfTreeSetOfItems, T outerKey,
+			Item itemToBePut, TreeSet<Item> emptyHashSet) {
 		/**
 		 * Invariant: treeSet - reference to map's inner TreeSet.
 		 */
-		Set<Item> treeSet = mapOfTreeSetOfItems.get(outerKey);
+		TreeSet<Item> treeSet = mapOfTreeSetOfItems.get(outerKey);
 		if (treeSet == null) {
 			treeSet = emptyHashSet;
 			mapOfTreeSetOfItems.put(outerKey, treeSet);
 		}
 		treeSet.add(itemToBePut);
+
 	}
 
-	/**
+	/**cmd
 	 * This method removes the entry by inner id
 	 * 
 	 * @param mapOfItemBasedTreeSet
 	 * @param innerKeyToBeRemoved
 	 * @param outerKey
 	 */
-	private <T> void removeFromItemBasedTreeset(Map<T, Set<Item>> mapOfItemBasedTreeSet, T outerKey,
+	private <T> void removeFromItemBasedTreeset(Map<T, TreeSet<Item>> mapOfItemBasedTreeSet, T[] outerKeys,
 			Item innerKeyToBeRemoved) {
-		mapOfItemBasedTreeSet.get(outerKey).remove(innerKeyToBeRemoved);
+		for (T outerKey : outerKeys) {
+
+			TreeSet<Item> items = mapOfItemBasedTreeSet.get(outerKey);
+			boolean value = items.remove(innerKeyToBeRemoved);
+			if (value == false) {
+				throw new NullPointerException();
+			}
+			//mapOfItemBasedTreeSet.put(outerKey, items);
+		}
 	}
 
 }

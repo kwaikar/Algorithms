@@ -16,6 +16,7 @@ public class DescriptionKey {
 	private final Integer lengthOfKey;
 	private final Long sumOfKeys;
 	private Long[] key;
+	private Integer hashCode=null;
 
 	public DescriptionKey(Long[] key) {
 		super();
@@ -26,7 +27,7 @@ public class DescriptionKey {
 		for (long singleKey : key) {
 			sum += singleKey;
 		}
-		sumOfKeys = sum;
+		this.sumOfKeys = sum;
 	}
 
 	/**
@@ -49,27 +50,25 @@ public class DescriptionKey {
 	public Long[] getKey() {
 		return key;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
+ 
+	 
 	@Override
 	public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + Arrays.hashCode(key);
-			result = prime * result + ((lengthOfKey == null) ? 0 : lengthOfKey.hashCode());
-			result = prime * result + ((sumOfKeys == null) ? 0 : sumOfKeys.hashCode());
-			return result;
+		if(hashCode==null){
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(key);
+		hashCode=result;
+		return result;
+		}
+		else
+		{
+			return hashCode;
+		}
+		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -79,8 +78,7 @@ public class DescriptionKey {
 		if (getClass() != obj.getClass())
 			return false;
 		DescriptionKey other = (DescriptionKey) obj;
-		if (!Arrays.equals(key, other.key))
-			return false;
+	
 		if (lengthOfKey == null) {
 			if (other.lengthOfKey != null)
 				return false;
@@ -91,7 +89,19 @@ public class DescriptionKey {
 				return false;
 		} else if (!sumOfKeys.equals(other.sumOfKeys))
 			return false;
+		if (!Arrays.equals(key, other.key))
+			return false;
 		return true;
 	}
 
+	 
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "DescriptionKey [key=" + Arrays.toString(key) + "]";
+	}
+ 
 }

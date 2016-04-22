@@ -67,12 +67,7 @@ public class Item {
 	 */
 	public void setDescription(Long[] description) {
 		if (description != null) {
-			List<Long> temp = new ArrayList<Long>();
-			for (Long Long1 : description) {
-				if (Long1 != null) {
-					temp.add(Long1);
-				}
-			}
+ 
 			Arrays.sort(description);
 			sortedDescription = description;
 		}
@@ -89,7 +84,7 @@ public class Item {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + (int) (id ^ (id >>> 32));
-			hashCode = result;
+		 	hashCode = result;
 			return result;
 		} else {
 			return hashCode;
@@ -122,8 +117,7 @@ public class Item {
 	 */
 	@Override
 	public String toString() {
-		return "Item [id=" + id + ", price=" + price + ", sortedDescription=" + Arrays.toString(sortedDescription)
-				+ ", hashCode=" + hashCode + "]";
+		return "Item [id=" + id  + "]";
 	}
 
 }
